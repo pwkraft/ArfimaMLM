@@ -1,10 +1,10 @@
 Package: ArfimaMLM
 Type: Package
 Title: Arfima-MLM estimation for repeated cross-sectional data
-Version: 1.0
-Date: 2013-12-15
+Version: 1.1
+Date: 2014-01-15
 Author: Patrick Kraft, with contributions from Christopher Weber
 Maintainer: Patrick Kraft <patrick.kraft@stonybrook.edu>
 Description: ArfimaMLM provides functions to facilitate the estimation of ARFIMA-MLM for repeated cross-sectional data. The estimation procedure uses double filtering with ARFIMA methods to account for autocorrelation in longer RCS followed by the use of multilevel modeling (MLM) to estimate both aggregate- and individual-level parameters simultaneously.
-Depends: R (>= 3.0.0), fracdiff, lme4
+Depends: R (>= 3.0.0), fracdiff, fractal, lme4
 License: GPL-2

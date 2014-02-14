@@ -1,2 +1,2 @@
 fd <-
-function(x, dval="GPH", ...) UseMethod("fd",object=dval)
+function(x, dval="Hurst") UseMethod("fd",object=dval)

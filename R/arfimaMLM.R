@@ -1,6 +1,5 @@
 arfimaMLM <-
-function(formula, data, d="GPH"
-                      , ecmformula=NULL, decm="GPH", drop=1, ...){
+function(formula, data, d="Hurst", arma=NULL, ecmformula=NULL, decm="Hurst", drop=1, ...){
   
   # select variable names from formula
   dv <- paste(formula)[2]
@@ -29,39 +28,55 @@ function(formula, data, d="GPH"
   # step 2: fractionally difference .fd variables (see fd function)
   # note: this might be more efficient with a function like apply/plyr
   # but then the integration with manual d-vals would be more complicated
-  varlist <- unique(c(dv.dif[[2]],iv.fd[[2]],rand.dif[[2]]))
+  varlist <- unique(c(dv.dif[[2]],iv.fd[[2]]))
   data.fd <- cbind(data.mean[,1],data.mean[,varlist])
   res.d <- NULL
+  if(!is.null(arma)) {res.arma <- vector("list",length=length(arma))}
+  else res.arma <- NULL
   if(is.character(d)) {
     for(i in 1:length(varlist)){
-      tmp <- fd(data.mean[,varlist[i]],dval=d, ...)
+      tmp <- fd(data.mean[,varlist[i]],dval=d)
       data.fd[,varlist[i]] <- tmp$series
       res.d <- rbind(res.d,c(varlist[i],tmp$estimator,tmp$value))
       rm(tmp)
     }
-  } 
-  else if(length(d)==length(varlist)){
+  } else if(length(d)==length(varlist)){
     if (length(setdiff(varlist,names(d)))!=0) {
-      stop("List of d-parameters does not fit to model specification!")}
-    else for(i in 1:length(varlist)){
-      tmp <- fd(data.mean[,varlist[i]],dval=d[[grep(varlist[i], names(d),fixed=T)]], ...)
+      stop("List of d-parameters does not fit to model specification!")
+    } else for(i in 1:length(varlist)){
+      tmp <- fd(data.mean[,varlist[i]],dval=d[[grep(varlist[i], names(d),fixed=T)]])
       data.fd[,varlist[i]] <- tmp$series
       res.d <- rbind(res.d,c(varlist[i],tmp$estimator,tmp$value))
+      rm(tmp)
+    }
+  } else stop("List of d-parameters does not have correct length!")
+  
+  # step 3: estimate AR/MA parameter for selected variables
+  if(!is.null(arma)){
+    if(length(intersect(varlist,names(arma)))!=length(arma)){
+      stop("List for AR/MA estimation does not fit to model specification!")
+    }
+    for(i in 1:length(arma)){
+      tmp <- arima(data.fd[,names(arma)[i]]
+                   , order=c(arma[[names(arma)[i]]][1],0,arma[[names(arma)[i]]][2])
+                   , include.mean=F)
+      data.fd[,names(arma[i])] <- tmp$residuals
+      res.arma[[i]] <- tmp
+      names(res.arma)[i] <- names(arma[i])
       rm(tmp)
     }
   }
-  else stop("List of d-parameters does not have correct length!")
   
-  # step 3: adjust varnames
+  # step 4: adjust varnames
   names(data.mean) <- paste0(names(data.mean),".mean")
   names(data.mean)[1] <- timevar
   names(data.fd) <- paste0(names(data.fd),".fd")
-  names(data.fd)[1] <- timevar  
+  names(data.fd)[1] <- timevar
   
-  # step 4: calculate ecm
+  # step 5: calculate ecm
   if(!is.null(ecmformula)){
     res.ecm <- lm(ecmformula,data=data.mean)
-    tmp  <- fd(residuals(res.ecm), decm, ...)
+    tmp  <- fd(residuals(res.ecm), decm)
     ecm <- tmp$series
     ecm <- c(NA,ecm[1:(length(ecm)-1)])
     data.fd <- cbind(data.fd,ecm)
@@ -69,10 +84,10 @@ function(formula, data, d="GPH"
     rm(tmp)
   }
   
-  # step 5: merge datasets
+  # step 6: merge datasets
   data.merged <- merge(data, cbind(data.mean,data.fd[,-1]), by=timevar) 
   
-  # step 6: calculate dv_dif
+  # step 7: calculate dv_dif
   dv_dif <- data.merged[,dv.dif[[2]]]-(data.merged[,grep(paste0(dv.dif[[2]],".mean")
                                                          ,names(data.merged))]
                                        -data.merged[,grep(paste0(dv.dif[[2]],".fd")
@@ -80,26 +95,26 @@ function(formula, data, d="GPH"
   data.merged <- cbind(data.merged, dv_dif)
   names(data.merged)[ncol(data.merged)] <- dv.dif[[1]]
   
-  # step 7: calculate iv_dif
+  # step 8: calculate iv_dif
   iv_dif <- data.merged[,iv.dif[[2]]]-data.merged[,grep(paste0(iv.dif[[2]],".mean")
                                                         ,names(data.merged))]
   data.merged <- cbind(data.merged, iv_dif)
   names(data.merged)[(ncol(data.merged)
-                      -length(iv.dif[[2]])+1):ncol(data.merged)] <- iv.dif[[1]]  
+                      -length(iv.dif[[2]])+1):ncol(data.merged)] <- iv.dif[[1]]
   
-  # step 8: drop certain number of initial observations
+  # step 9: drop certain number of initial observations
   data.merged <- subset(data.merged
                         , data.merged[,timevar]>(min(data.merged[,timevar])+drop-1))
   
-  # step 9: estimate multilevel model
+  # step 10: estimate multilevel model  
   res <- lmer(formula, data=data.merged)
   
   # output
   rownames(res.d) <- res.d[,1]; res.d <- data.frame(res.d[,2],as.numeric(res.d[,3]))
   colnames(res.d) <- c("Method","Estimate")
-  if(is.null(ecmformula)) out <- list(result=res,d=res.d,data.mean=data.mean
+  if(is.null(ecmformula)) out <- list(result=res,d=res.d,arma=res.arma,data.mean=data.mean
                                       ,data.fd=data.fd,data.merged=data.merged)
-  else out <- list(result=res,ecm=res.ecm,d=res.d,data.mean=data.mean
+  else out <- list(result=res,ecm=res.ecm,d=res.d,arma=res.arma,data.mean=data.mean
                    ,data.fd=data.fd,data.merged=data.merged)
   class(out) <- "arfimaMLM"
   out

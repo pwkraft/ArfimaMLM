@@ -5,15 +5,15 @@
 \alias{summary.arfimaMLM}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-ARFIMA-MLM estimation for repeated cross-sectional data
+ARFIMA-MLM estimation for repeated cross-sectional data and pooled cross-sectional time series data
 }
 \description{
-Fit an ARFIMA-MLM to a repeated cross-sectional dataset. For the variables specified by the user, the function automatically implements the aggregation and fractional differencing of time/level variables as well as the necessary procedures to remove deterministic components from the dependent as well as the major independent variables.
+Fit an ARFIMA-MLM to a repeated cross-sectional dataset or a pooled cross-sectional time series dataset. For the variables specified by the user, the function automatically implements the aggregation and fractional differencing of time/level variables as well as the necessary procedures to remove deterministic components from the dependent as well as the major independent variables.
 }
 \usage{
-arfimaMLM(formula, data, d = "GPH"
-          , ecmformula = NULL, decm = "GPH"
-          , drop = 1, ...)
+arfimaMLM(formula, data, d = "Hurst", arma=NULL
+          , ecmformula = NULL, decm = "Hurst"
+          , drop = 1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -24,7 +24,10 @@ arfimaMLM(formula, data, d = "GPH"
   Data frame containing the original variables named in \code{formula}.
 }
   \item{d}{
-Call for a specific estimation method for the fractional differencing parameter in the \code{\link[fracdiff:fracdiff]{fracdiff}}-package (\code{"ML"}, \code{"GPH"}, or \code{"Sperio"}). Default is \code{"GPH"}. If the user wants to specify the methods for each variable individually, \code{d} can be a list containign a call for every individual variable. Furthermore, the list can contain numeric values for differencing parameters which were estimated externally (see example). A variable will not be differenced if \code{d} is specified as 0.
+Call for a specific estimation method for the fractional differencing parameter in the \code{\link[fractal:hurstSpec]{fractal}}-package (\code{"Hurst"}) or in the \code{\link[fracdiff:fracdiff]{fracdiff}}-package (\code{"ML"}, \code{"GPH"}, or \code{"Sperio"}). Default estimation procedure is by estimating the \code{Hurst} coefficient. If the user wants to specify the methods for each variable individually, \code{d} can be a list containign a call for every individual variable. Furthermore, the list can contain numeric values for differencing parameters which were estimated externally (see example). A variable will not be differenced if \code{d} is specified as 0.
+}
+  \item{arma}{
+List of variables for which AR and MA parameters are to be estimated (after fractional differencing) as well as a vector containing the respective orders of the model to fit. \code{order[1]} corresponds to the AR part and \code{order[2]} to the MA part, similar to the model specification in \code{\link[stats:arima]{arima}} (just excluding the d parameter here). Independent variables included in this list have to be augmented by the suffix \code{.fd} in \code{formula}. If the dependent variable included in this list, it has to be augmented by the suffix \code{.dif} in \code{formula}. See the examples for clarification.
 }
   \item{ecmformula}{
 Specification of the cointegration regression to receive the residuals for the error correction mechanism (ecm) included in \code{formula}: linear formula object with the response on the left of a ~ operator and the independent variables, separated by + operators, on the right. Note that the variable names included here cannot be the original variable names included in \code{data}, but rather has to be extended by adding "\code{.mean}" to the original names, since the ecm is always based on the level/time aggreegates (see example).
@@ -57,6 +60,7 @@ The function returns a list of the class 'arfimaMLM' with the following items:
 \item{result}{Output of the multilevel model as specified in \code{formula}.}
 \item{ecm}{Output of the cointegration regression (returned if \code{ecmformula} is specified). The lagged residuals of the cointegration regression are included in the multilevel model if \code{ecm} is included in \code{formula}.}
 \item{d}{Matrix of fractional differencing parameters estimated for the level variables (\code{.dif} and \code{.fd}) as well as the estimation method for each variable. Returns the specified value for d if it was specified in the initial call of the function.}
+\item{arma}{List of \code{arima} results for each variable specified in the model call. Contains AR/MA estimates as well as the model residuals.}
 \item{data.mean}{Data frame of variable means declared in \code{formula} as \code{.dif} or \code{.fd} for each time point specified by the level variable in \code{formula}.}
 \item{data.fd}{Data frame of fractionally differenced level variables declared in \code{formula} as \code{.dif} or \code{.fd} for each time point specified by the level variable in \code{formula}.}
 \item{data.merged}{Merged data frame used when estimating the multilevel model consisting of the original data as well as \code{data.mean} and \code{data.fd}}
@@ -73,7 +77,7 @@ Patrick Kraft
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
-\code{\link[lme4:lme4]{lme4}}, \code{\link[fracdiff:fracdiff]{fracdiff}}, \code{\link[ArfimaMLM:fd]{fd}}, and \code{\link[ArfimaMLM:ArfimaMLM]{ArfimaMLM}} for a package overview.
+\code{\link[lme4:lme4]{lme4}}, \code{\link[fracdiff:fracdiff]{fracdiff}}, \code{\link[fractal:hurstSpec]{hurstSpec}}, \code{\link[ArfimaMLM:fd]{fd}}, and \code{\link[ArfimaMLM:ArfimaMLM]{ArfimaMLM}} for a package overview.
 }
 \examples{
 
@@ -105,13 +109,13 @@ data$y <- (b1*data$x1-0.05*data$x2+0.3*rep(z1_t,each=n)
 
 # estimate models
 m1 <- arfimaMLM(y.dif ~ x1.dif + x2 + z1.fd + z2.fd +(1|time)
-                ,data=data ,d="ML", decm="ML")
+                ,data=data ,d="ML")
 m2 <- arfimaMLM(y.dif ~ x1.dif + x2 + z1.fd + z2.fd + ecm + (1|time)
                 , ecmformula = y.mean ~ x1.mean
                 , d=list(y="ML", z1="Sperio", z2=0.25)
-                , data=data)
+                , decm="ML", data=data)
 m3 <- arfimaMLM(y.dif ~ x1.dif + x2 + z1.fd + z2.fd + (1+x1.dif|time)
-                , data=data)
+                , arma=list(y=c(1,0),z2=c(0,1)), data=data)
 
 m1
 summary(m2)
