@@ -18,7 +18,7 @@ Authors
 -------
 Patrick Kraft, with contributions from Christopher Weber
 
-Maintainer: Patrick Kraft <patrick.kraft@stonybrook.edu>
+Maintainer: Patrick Kraft 
 
 
 References
