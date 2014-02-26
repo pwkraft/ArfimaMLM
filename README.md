@@ -1,4 +1,4 @@
-`ArfimaMLM` estimation for repeated cross-sectional data and pooled cross-sectional time series data in R
+ArfimaMLM estimation for repeated cross-sectional data and pooled cross-sectional time series data in R
 =======================================================================================================
 
 Description
