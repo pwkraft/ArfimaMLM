@@ -27,7 +27,7 @@ Call for a specific estimation method for the fractional differencing parameter 
 }
   \item{\dots}{
 Further arguments passed to  \code{\link[fractal:hurstSpec]{hurstSpec}}, \code{\link[fracdiff:fracdiff]{fracdiff}}, \code{\link[fracdiff:fdGPH]{fdGPH}},
-\code{\link[fracdiff:fdSperio]{fdSperio}}, or \code{\link[fracdiff:diffseries]{diffseries}} (not fully functional yet).
+\code{\link[fracdiff:fdSperio]{fdSperio}}, or \code{\link[fracdiff:diffseries]{diffseries}}.
 }
 }
 \details{
@@ -56,21 +56,23 @@ Patrick Kraft
 \code{\link[fracdiff:fdSperio]{fdSperio}}, \code{\link[fracdiff:diffseries]{diffseries}}
 }
 \examples{
+require(fractal)
 require(fracdiff)
-require(hurstSpec)
 
 set.seed(123)
 series=fracdiff.sim(100, d=0.4, mu=10)$series
 
 ## S3 method for class 'character'
-# estimates fractional differencing parameter d and differenciates series accordingly
+# estimates fractional differencing parameter d
+# and differenciates series accordingly
 series.fd1<-fd(series)
 series.fd2<-fd(series, dval="ML")
 series.fd3<-fd(series, dval="GPH")
 series.fd4<-fd(series, dval="Sperio")
 
 ## S3 method for class 'numeric'
-# differenciates series according to externally provided differencing parameter
+# differenciates series according to 
+# externally provided differencing parameter
 series.fd5<-fd(series, dval=0.4)
 }
 \keyword{ts}

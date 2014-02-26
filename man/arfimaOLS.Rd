@@ -1,23 +1,23 @@
-\name{arfimaMLM}
-\alias{arfimaMLM}
-\alias{print.arfimaMLM}
-\alias{print.summary.arfimaMLM}
-\alias{summary.arfimaMLM}
+\name{arfimaOLS}
+\alias{arfimaOLS}
+\alias{print.arfimaOLS}
+\alias{print.summary.arfimaOLS}
+\alias{summary.arfimaOLS}
 \title{
-ARFIMA-MLM estimation for repeated cross-sectional data and pooled cross-sectional time series data
+ARFIMA-OLS estimation for repeated cross-sectional data and pooled cross-sectional time series data
 }
 \description{
-Fits an ARFIMA-MLM to a repeated cross-sectional dataset or a pooled cross-sectional time series dataset. For the variables specified by the user, the function automatically implements the aggregation and fractional differencing of time/level variables as well as the necessary procedures to remove deterministic components from the dependent as well as the major independent variables.
+Fits an ARFIMA-OLS to a repeated cross-sectional dataset or a pooled cross-sectional time series dataset. For the variables specified by the user, the function automatically implements the aggregation and fractional differencing of time/level variables as well as the necessary procedures to remove deterministic components from the dependent as well as the major independent variables.
 }
 \usage{
-arfimaMLM(formula, data, timevar
+arfimaOLS(formula, data, timevar
           , d = "Hurst", arma = NULL
           , ecmformula = NULL, decm = "Hurst"
           , drop = 5, report.data = TRUE, ...)
 }
 \arguments{
   \item{formula}{
-  An object of the class "\code{\link{formula}}" that specifies the multilevel model to be estimated (see \code{\link{lmer}} for details): a two-sided linear formula object describing both the fixed-effects and fixed-effects part of the model, with the response on the left of a ~ operator and the terms, separated by + operators, on the right. Random-effects terms are distinguished by vertical bars ("|") separating expressions for design matrices from grouping factors (i.e. the variable indicating the timepoints of the repeated cross-sectional design as well as potentially further clustering variables). See details below for further information about selecting variables for automatic aggregation, fractional differencing, and the removal of deterministic components.
+  An object of the class "\code{\link{formula}}" that specifies the linear model to be estimated (see \code{\link{lm}} for details), typically with the response on the left of a ~ operator and the terms, separated by + operators, on the right. See details below for further information about selecting variables for automatic aggregation, fractional differencing, and the removal of deterministic components.
 }
   \item{data}{
   Data frame containing the original variables named in \code{formula}.
@@ -41,15 +41,15 @@ Call for estimation method for the fractional differencing parameter (see \code{
 Number of time points from the beginning of the series dropped from analysis. Default is 5.
 }
   \item{report.data}{
-Logical. \code{arfimaMLM} returns the transformed dataset used to estimate the final model as part of the results. Default is \code{TRUE}.
+Logical. \code{arfimaOLS} returns the transformed dataset used to estimate the final model as part of the results. Default is \code{TRUE}.
 }
   \item{\dots}{
-Further arguments passed to the estimation procedures used within the function (e.g. for \code{lmer}).
+Further arguments passed to the estimation procedures used within the function (e.g. for \code{lm}).
 }
 }
 \details{
 \itemize{
-\item The original variable names of \code{data} used in \code{formula} can be extended by adding three different suffixes: \code{.fd}, \code{.xdif}, and \code{.ydif}. These suffixes select variables for transformations according to the Arfima-MLM framework before estimating the actual model.
+\item The original variable names of \code{data} used in \code{formula} can be extended by adding three different suffixes: \code{.fd}, \code{.xdif}, and \code{.ydif}. These suffixes select variables for transformations according to the Arfima-OLS framework before estimating the actual model.
 
 The suffix \code{.fd} allows the user to select variables which are supposed to be transformed to a fractionally differenced level-variable (by aggregating individuals over each time point prior to fractionally differencing the series), or variables which are already included as a level-variable in the original dataset and are just supposed to be fractionally differenced before the multilevel model is estimated. 
 
@@ -64,7 +64,7 @@ If the suffix \code{.ydif} is added to the dependent variable (e.g. \eqn{y[it]})
 }
 \value{
 The function returns a list of the class 'arfimaMLM' with the following items:
-\item{result}{Output of the multilevel model as specified in \code{formula}.}
+\item{result}{Output of the linear model as specified in \code{formula}.}
 \item{d}{Matrix of fractional differencing parameters estimated for the level variables (\code{.fd} and \code{.ydif}) as well as the estimation method for each variable. Returns the specified value for d if it was specified in the initial call of the function.}
 \item{arma}{List of \code{arima} results for each variable specified in the model call. Contains AR/MA estimates as well as the model residuals.}
 \item{ecm}{Output of the cointegration regression (returned if \code{ecmformula} is specified). The lagged residuals of the cointegration regression are included in the multilevel model if \code{ecm} is included in \code{formula}.}
@@ -84,12 +84,11 @@ Patrick Kraft
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
-\code{\link[lme4:lme4]{lme4}}, \code{\link[fracdiff:fracdiff]{fracdiff}}, \code{\link[fractal:hurstSpec]{hurstSpec}}, \code{\link[ArfimaMLM:arfimaPrep]{arfimaPrep}}, \code{\link[ArfimaMLM:fd]{fd}}, and \code{\link[ArfimaMLM:ArfimaMLM]{ArfimaMLM}} for a package overview.
+\code{\link{lm}}, \code{\link[fracdiff:fracdiff]{fracdiff}}, \code{\link[fractal:hurstSpec]{hurstSpec}}, \code{\link[ArfimaMLM:arfimaPrep]{arfimaPrep}}, \code{\link[ArfimaMLM:fd]{fd}}, and \code{\link[ArfimaMLM:ArfimaMLM]{ArfimaMLM}} for a package overview.
 }
 \examples{
 require(fractal)
 require(fracdiff)
-require(lme4)
 
 # set basic parameters for simulation
 t = 100 # number of time points
@@ -115,12 +114,12 @@ data$y <- (b1*data$x1-0.05*data$x2+0.3*rep(z1_t,each=n)
             +0*data$z2+rnorm(N,rep(y_t,each=n),1))
 
 # estimate models
-m1 <- arfimaMLM(y.ydif ~ x1.xdif + x2 + z1.fd + z2.fd + (1 | time)
+m1 <- arfimaOLS(y.ydif ~ x1.xdif + x2 + z1.fd + z2.fd + (1 | time)
                 , data = data, timevar = "time")
-m2 <- arfimaMLM(y.ydif ~ x1.xdif + x2 + z1.fd + z2.fd + ecm + (1 | time)
+m2 <- arfimaOLS(y.ydif ~ x1.xdif + x2 + z1.fd + z2.fd + ecm + (1 | time)
                 , data = data, timevar = "time", d="ML"
                 , ecmformula = y.mean ~ x1.mean, decm="Sperio")
-m3 <- arfimaMLM(y.ydif ~ x1.xdif + x2 + z1.fd + z2.fd + (1+x1.xdif|time)
+m3 <- arfimaOLS(y.ydif ~ x1.xdif + x2 + z1.fd + z2.fd + (1+x1.xdif|time)
                 , data = data, timevar = "time"
                 , d=list(y="ML", z1="Sperio", z2=0.25)
                 , arma=list(y=c(1,0),z2=c(0,1)))                

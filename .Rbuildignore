@@ -1,0 +1,4 @@
+﻿.git/.*
+.gitignore
+README.md
+R/.Rhistory
