@@ -6,6 +6,7 @@ function(x, dval="Hurst", ...) {
   else if(dval=="GPH")  d.value <- fdGPH(x, ...)$d
   else if(dval=="Sperio")  d.value <- fdSperio(x, ...)$d
   else stop("Fractional differencing estimator must be 'Hurst', 'ML', 'GPH', or 'Sperio'")
+  if (d.value > 1) d.value <- 1
   x <- diffseries(x, d.value)
   out <- list(series=x,estimator=dval,value=d.value)
   out

@@ -90,18 +90,21 @@ arfimaPrep <-
     
     # step 7: calculate dif value for dv
     if (length(varlist.ydif)>0){
-      ydif <- data.merged[,varlist.ydif]-(data.merged[,grep(paste0(varlist.ydif,".mean")
-                                                             ,names(data.merged))]
-                                           -data.merged[,grep(paste0(varlist.ydif,".fd")
-                                                              ,names(data.merged))])
-      data.merged <- cbind(data.merged, ydif)
-      names(data.merged)[ncol(data.merged)] <- paste0(varlist.ydif,".ydif")
+      for (i in 1:length(varlist.ydif)){
+        ydif <- data.merged[,varlist.ydif[i]]-(data.merged[,grep(paste0(varlist.ydif[i],".mean")
+                                                               ,names(data.merged))]
+                                             -data.merged[,grep(paste0(varlist.ydif[i],".fd")
+                                                                ,names(data.merged))])
+        data.merged <- cbind(data.merged, ydif)
+      }
+      names(data.merged)[ncol(data.merged)
+                         -length(varlist.ydif)+1):ncol(data.merged)] <- paste0(varlist.ydif,".ydif")
     }
     
     # step 8: calculate dif values for ivs
     if (length(varlist.xdif)>0){
       for (i in 1:length(varlist.xdif)){
-        xdif <- data.merged[,varlist.xdif]-data.merged[,grep(paste0(varlist.xdif,".mean")
+        xdif <- data.merged[,varlist.xdif[i]]-data.merged[,grep(paste0(varlist.xdif[i],".mean")
                                                               ,names(data.merged))]
         data.merged <- cbind(data.merged, xdif)
       }
