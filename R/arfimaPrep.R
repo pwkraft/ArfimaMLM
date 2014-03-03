@@ -97,7 +97,7 @@ arfimaPrep <-
                                                                 ,names(data.merged))])
         data.merged <- cbind(data.merged, ydif)
       }
-      names(data.merged)[ncol(data.merged)
+      names(data.merged)[(ncol(data.merged)
                          -length(varlist.ydif)+1):ncol(data.merged)] <- paste0(varlist.ydif,".ydif")
     }
     
