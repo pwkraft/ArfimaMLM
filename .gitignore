@@ -6,3 +6,6 @@
 
 # temporary files
 *~
+
+# swap files
+.swp
