@@ -1,7 +1,6 @@
 arfimaPrep <-
   function(data, timevar, varlist.mean, varlist.fd, varlist.xdif, varlist.ydif
            , d="Hurst", arma=NULL, ecmformula=NULL, decm="Hurst", drop=5, ...){
-    
     # warnings / error messages
     if(missing(timevar)) stop("timevar must be specified!")
     if(length(unique(diff(sort(unique(data[,timevar])))))>1) warning("Time series is not evenly spaced!")
@@ -46,9 +45,19 @@ arfimaPrep <-
         stop("List for AR/MA estimation does not fit to model specification!")
       }
       for(i in 1:length(arma)){
-        tmp <- arima(data.fd[,names(arma)[i]]
-                     , order=c(arma[[names(arma)[i]]][1],0,arma[[names(arma)[i]]][2])
+	if (max(arma[[i]][[1]]) == length(arma[[i]][[1]]) & 
+	    max(arma[[i]][[2]]) == length(arma[[i]][[2]])) {
+	  tmp <- arima(data.fd[,names(arma)[i]]
+                     , order=c(max(arma[[i]][[1]]),0,max(arma[[i]][[2]]))
                      , include.mean=F)
+	} else {
+	  fixed <- rep(0, max(arma[[i]][[1]]) + max(arma[[i]][[2]]))
+	  fixed[c(arma[[i]][[1]],max(arma[[i]][[1]]) + arma[[i]][[2]])] <- NA
+	  tmp <- arima(data.fd[,names(arma)[i]]
+                     , order=c(max(arma[[i]][[1]]),0,max(arma[[i]][[2]]))
+                     , include.mean=F
+		     , fixed = fixed )	
+	}
         data.fd[,names(arma[i])] <- tmp$residuals
         res.arma[[i]] <- tmp
         names(res.arma)[i] <- names(arma[i])
@@ -107,7 +116,7 @@ arfimaPrep <-
         xdif <- data.merged[,varlist.xdif[i]]-data.merged[,grep(paste0(varlist.xdif[i],".mean")
                                                               ,names(data.merged))]
         data.merged <- cbind(data.merged, xdif)
-      }
+     }
       names(data.merged)[(ncol(data.merged)
                           -length(varlist.xdif)+1):ncol(data.merged)] <- paste0(varlist.xdif,".xdif")
     }
@@ -118,7 +127,8 @@ arfimaPrep <-
     
     # return data
     if (!is.null(res.d)){
-      rownames(res.d) <- res.d[,1]; res.d <- data.frame(res.d[,2],as.numeric(res.d[,3]))
+      rownames(res.d) <- res.d[,1]
+      res.d <- data.frame(res.d[,2],as.numeric(res.d[,3]))
       colnames(res.d) <- c("Method","Estimate")
     }
     out <- list(data.mean = data.mean, data.fd = data.fd, data.merged = data.merged
