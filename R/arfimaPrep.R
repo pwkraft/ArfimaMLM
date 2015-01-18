@@ -45,20 +45,27 @@ arfimaPrep <-
         stop("List for AR/MA estimation does not fit to model specification!")
       }
       for(i in 1:length(arma)){
-	if (max(arma[[i]][[1]]) == length(arma[[i]][[1]]) & 
+          if(class(arma[[i]])=="numeric"){
+              tmp <- arima(data.fd[,names(arma)[i]]
+                           , order=c(arma[[names(arma)[i]]][1],0,arma[[names(arma)[i]]][2])
+                           , include.mean = FALSE)
+          }
+          if(class(arma[[i]])=="list"){
+            if (max(arma[[i]][[1]]) == length(arma[[i]][[1]]) & 
 	    max(arma[[i]][[2]]) == length(arma[[i]][[2]])) {
-	  tmp <- arima(data.fd[,names(arma)[i]]
-                     , order=c(max(arma[[i]][[1]]),0,max(arma[[i]][[2]]))
-                     , include.mean=F)
-	} else {
-	  fixed <- rep(0, max(arma[[i]][[1]]) + max(arma[[i]][[2]]))
-	  fixed[c(arma[[i]][[1]],max(arma[[i]][[1]]) + arma[[i]][[2]])] <- NA
-	  tmp <- arima(data.fd[,names(arma)[i]]
-                     , order=c(max(arma[[i]][[1]]),0,max(arma[[i]][[2]]))
-                     , include.mean=F
-		     , fixed = fixed )	
-	}
-        data.fd[,names(arma[i])] <- tmp$residuals
+                tmp <- arima(data.fd[,names(arma)[i]]
+                           , order=c(max(arma[[i]][[1]]),0,max(arma[[i]][[2]]))
+                           , include.mean = FALSE)
+	    } else {
+                fixed <- rep(0, max(arma[[i]][[1]]) + max(arma[[i]][[2]]))
+                fixed[c(arma[[i]][[1]],max(arma[[i]][[1]]) + arma[[i]][[2]])] <- NA
+                tmp <- arima(data.fd[,names(arma)[i]]
+                           , order=c(max(arma[[i]][[1]]),0,max(arma[[i]][[2]]))
+                           , include.mean = FALSE
+                           , fixed = fixed )	
+            }
+          }
+	data.fd[,names(arma[i])] <- tmp$residuals
         res.arma[[i]] <- tmp
         names(res.arma)[i] <- names(arma[i])
         rm(tmp)
