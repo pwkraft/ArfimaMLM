@@ -7,11 +7,11 @@ Description
 
 * Package: ArfimaMLM
 * Type: Package
-* Version: 1.2
-* Date: 2014-02-25
+* Version: 1.3
+* Date: 2015-01-19
 * License: GPL-2
 
-The main function of the package is `arfimaMLM`, which implements ARFIMA and multilevel models on a repeated cross-sectional dataset as described by Lebo and Weber (forthcoming). Furthermore, the function `arfimaOLS` uses the same initial procedures but estimates a simple linear model instead of the multilevel model. The package also includes `arfimaPrep`, which prepares a dataset for subsequent analyses according to the Arfima-MLM framework without estimating the final model itself. `fd` is a wrapper function to estimate the fractional differencing parameter using `hurstSpec` of the `fractal`-package as well as procedures provided by the `fracdiff`-package (via ML, GPH, and Sperio) and to differentiate the series accordingly (mainly for internal use in `arfimaMLM`, `arfimaOLS`, and `arfimaPrep`).
+The main function of the package is `arfimaMLM`, which implements ARFIMA and multilevel models on a repeated cross-sectional dataset as described by Lebo and Weber (2015). Furthermore, the function `arfimaOLS` uses the same initial procedures but estimates a simple linear model instead of the multilevel model. The package also includes `arfimaPrep`, which prepares a dataset for subsequent analyses according to the Arfima-MLM framework without estimating the final model itself. `fd` is a wrapper function to estimate the fractional differencing parameter using `hurstSpec` of the `fractal`-package as well as procedures provided by the `fracdiff`-package (via ML, GPH, and Sperio) and to differentiate the series accordingly (mainly for internal use in `arfimaMLM`, `arfimaOLS`, and `arfimaPrep`).
 
 
 Authors
@@ -23,4 +23,4 @@ Maintainer: Patrick Kraft
 
 References
 ----------
-Lebo, M. and Weber, C. (forthcoming) An Effective Approach to the Repeated Cross Sectional Design. American Journal of Political Science
+Lebo, M. and Weber, C. 2015. "An Effective Approach to the Repeated Cross Sectional Design." American Journal of Political Science 59(1): 242-258.

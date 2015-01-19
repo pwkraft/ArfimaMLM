@@ -40,8 +40,8 @@ Patrick Kraft
 }
 \examples{
 
-f1 <- y ~ x1.dif + x2 + z1.fd + z2
-f2 <- y.dif ~ x1.dif + x2 + z1.fd + z2.fd + (1+x1.dif|time)
+f1 <- y ~ x1.xdif + x2 + z1.fd + z2
+f2 <- y.ydif ~ x1.xdif + x2 + z1.fd + z2.fd + (1+x1.xdif|time)
 f3 <- y.mean ~ x1.mean
 
 extractVars(formula = f1)
