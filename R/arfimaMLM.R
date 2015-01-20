@@ -1,3 +1,5 @@
+#' @export
+#' @importFrom lme4 lmer
 arfimaMLM <-
 function(formula, data, timevar
          , d="Hurst", arma=NULL

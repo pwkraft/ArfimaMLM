@@ -1,3 +1,4 @@
+#' @export
 arfimaPrep <-
   function(data, timevar, varlist.mean, varlist.fd, varlist.xdif, varlist.ydif
            , d="Hurst", arma=NULL, ecmformula=NULL, decm="Hurst", drop=5, ...){
@@ -62,7 +63,7 @@ arfimaPrep <-
                 tmp <- arima(data.fd[,names(arma)[i]]
                            , order=c(max(arma[[i]][[1]]),0,max(arma[[i]][[2]]))
                            , include.mean = FALSE
-                           , fixed = fixed )	
+                           , fixed = fixed, transform.pars = FALSE)	
             }
           }
 	data.fd[,names(arma[i])] <- tmp$residuals

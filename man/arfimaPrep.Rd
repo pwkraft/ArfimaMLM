@@ -1,7 +1,7 @@
 \name{arfimaPrep}
 \alias{arfimaPrep}
 \title{
-Preparing a dataset for subsequent analysis accoring to the ARFIMA-MLM/ARFIMA-OLS framework
+Preparing a dataset for subsequent analysis accoring to the Arfima-MLM/Arfima-OLS framework
 }
 \description{
 This function prepares a repeated cross-sectional dataset or pooled cross-sectional time series data for subsequent analyses according to the Arfima-MLM/Arfima-OLS framework. This function is mainly used internally as part of \code{\link{arfimaMLM}} and \code{\link{arfimaOLS}}, but can also be used independently if the user prefers to separate the data preparation from the subsequent estimation of the multilevel (or simple linear) model. The function performs the aggregation and fractional differencing of time/level variables as well as the necessary procedures to remove deterministic components from the dependent as well as the major independent variables.
@@ -68,12 +68,12 @@ For variables in \code{varlist.ydif} (e.g. \eqn{y[it]}), the function will remov
 }
 \value{
 The function returns a list of datasets and estimation results with the following items:
-\item{data.mean}{Data frame of variable means declared in \code{varlist.mean}, \code{.fd}, \code{varlist.xdif}, or \code{varlist.ydif} for each time point specified by the level variable in \code{timevar}.}
-\item{data.fd}{Data frame of fractionally differenced level variables declared in \code{varlist.fd} or \code{varlist.ydif} for each time point specified by the level variable in \code{timevar}. If \code{arma} was additionally specified for a variable, it contains the residuals of the ARMA model fitted after (fractionally) differencing.}
+\item{data.mean}{Data frame of variable means declared in \code{varlist.mean}, \code{varlist.fd}, \code{varlist.xdif}, or \code{varlist.ydif} for each time point specified by the level variable in \code{timevar}.}
+\item{data.fd}{Data frame of fractionally differenced level variables for each time point specified in \code{timevar}, which were declared as \code{.fd} or \code{.ydif} in \code{formula}. If \code{arma} was additionally specified for a variable, it contains the residuals of the ARMA model fitted after (fractionally) differencing.}
 \item{data.merged}{Merged data frame which can be subsequently used to estimate the multilevel model. Consitst of the original data, \code{data.mean}, \code{data.fd}, as well as the variables specified in \code{varlist.xdif} and \code{.ydif}}
 \item{d}{Matrix of fractional differencing parameters estimated for the level variables (\code{varlist.fd} and \code{varlist.ydif}) as well as the estimation method for each variable. Returns the specified value for d if it was specified in the initial call of the function.}
 \item{arma}{List of \code{arima} results for each variable specified in the model call. Contains AR/MA estimates as well as the model residuals.}
-\item{ecm}{Output of the cointegration regression (returned if \code{ecmformula} is specified). The lagged residuals of the cointegration regression are included \code{data.merged} and \code{data.fd}.}
+\item{ecm}{Output of the cointegration regression (returned if \code{ecmformula} is specified). The lagged residuals of the cointegration regression are included in \code{data.fd} and \code{data.merged}.}
 }
 \references{
 Lebo, M. and Weber, C. 2015. ``An Effective Approach to the Repeated Cross Sectional Design.'' American Journal of Political Science 59(1): 242-258.
@@ -81,13 +81,13 @@ Lebo, M. and Weber, C. 2015. ``An Effective Approach to the Repeated Cross Secti
 \author{
 Patrick Kraft
 }
-\note{
+%\note{
 %%  ~~further notes~~
-}
+%}
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
-\code{\link[ArfimaMLM:arfimaMLM]{arfimaMLM}}, \code{\link[ArfimaMLM:arfimaOLS]{arfimaOLS}}, \code{\link[fracdiff:fracdiff]{fracdiff}}, \code{\link[fractal:hurstSpec]{hurstSpec}}, \code{\link[ArfimaMLM:fd]{fd}}, and \code{\link[ArfimaMLM:ArfimaMLM]{ArfimaMLM}} for a package overview.
+\code{\link[fracdiff:fracdiff]{fracdiff}}, \code{\link[fractal:hurstSpec]{hurstSpec}}, \code{\link[ArfimaMLM:fd]{fd}}, and \code{\link[ArfimaMLM:ArfimaMLM]{ArfimaMLM}} for a package overview.
 }
 \examples{
 require(fractal)
@@ -125,14 +125,17 @@ dat1 <- arfimaPrep(data = data, timevar="time"
                    , varlist.fd = c("y", "z1","z2")
                    , varlist.xdif = "x1", varlist.ydif = "y")
                    
-# including error correction mechanism, change estimation method for differencing parameter for all variables
+# including error correction mechanism
+# change estimation method for differencing parameter for all variables
 dat2 <- arfimaPrep(data = data, timevar="time"
                    , varlist.mean = c("y","x1","z1","z2")
                    , varlist.fd = c("y", "z1","z2")
                    , varlist.xdif = "x1", varlist.ydif = "y"
-                   , d = "ML", ecmformula = y.mean ~ x1.mean, decm="Sperio")
+                   , d = "ML", ecmformula = y.mean ~ x1.mean
+                   , decm="Sperio")
                    
-# vary estimation method for differencing parameter between variables, specify AR/MA models                   
+# vary estimation method for differencing parameter between variables
+# specify AR/MA models                   
 dat3 <- arfimaPrep(data = data, timevar="time"
                    , varlist.mean = c("y","x1","z1","z2")
                    , varlist.fd = c("y", "z1","z2")
@@ -147,7 +150,8 @@ dat4 <- arfimaPrep(data = data, timevar="time"
                    , varlist.xdif = "x1", varlist.ydif = "y"
                    , arma=list(y=list(c(1,3),0),z2=c(0,1)))                   
 
-head(dat1)
+ls(dat1)
+head(dat1$mean)
 head(dat2$merged)
 dat3$arma
 }

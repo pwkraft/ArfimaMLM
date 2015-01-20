@@ -1,3 +1,5 @@
+#' @export
+#' @importFrom fracdiff diffseries
 fd.numeric <-
 function(x, dval, ...) {
   if(dval!=0) {

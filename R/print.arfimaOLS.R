@@ -1,3 +1,4 @@
+#' @export
 print.arfimaOLS <-
 function(x, ...){
   if(!is.null(x$ecm)){

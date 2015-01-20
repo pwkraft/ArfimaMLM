@@ -1,3 +1,4 @@
+#' @export
 summary.arfimaMLM <-
 function(object, ...){
   d<- object$d

@@ -18,8 +18,8 @@ extractVars(formula,ecmformula=NULL)
   An object of the class "\code{\link{formula}}" that specifies a simple linear model. See \code{\link{lm}}, \code{\link{arfimaMLM}}, and \code{\link{arfimaOLS}} for details.
 }
 }
-\details{
-}
+%\details{
+%}
 \value{
 The function returns a list of character vectors containing variable names selected for subsequent data manipulation:
 \item{mean}{List of variables selected to calculate level means (i.e. variables originally augmented with suffixes \code{.fd}, \code{.xdif}, \code{ydif}, and \code{.mean}).}
@@ -30,9 +30,9 @@ The function returns a list of character vectors containing variable names selec
 \author{
 Patrick Kraft
 }
-\note{
+%\note{
 %%  ~~further notes~~
-}
+%}
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{

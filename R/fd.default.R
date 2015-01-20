@@ -1,5 +1,11 @@
+#' @export
+#' @importFrom fracdiff fracdiff
+#' @importFrom fracdiff fdGPH
+#' @importFrom fracdiff fdSperio
+#' @importFrom fracdiff diffseries
+#' @importFrom fractal hurstSpec
 fd.default <-
-function(x, dval="Hurst", ...) {  
+  function(x, dval="Hurst", ...) {  
   d.value <- NA
   if(dval=="Hurst") d.value <- hurstSpec(diff(x), method="standard", sdf.method="multitaper", ...)[1]+.5
   else if(dval=="ML") d.value <- fracdiff(x, ...)$d

@@ -1,3 +1,4 @@
+#' @export
 summary.arfimaOLS <-
 function(object, ...){
   d<- object$d

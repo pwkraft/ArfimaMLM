@@ -1,3 +1,4 @@
+#' @export
 extractVars <-
 function(formula,ecmformula=NULL){
   

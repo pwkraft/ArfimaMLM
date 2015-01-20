@@ -30,9 +30,9 @@ Further arguments passed to  \code{\link[fractal:hurstSpec]{hurstSpec}}, \code{\
 \code{\link[fracdiff:fdSperio]{fdSperio}}, or \code{\link[fracdiff:diffseries]{diffseries}}.
 }
 }
-\details{
+%\details{
 %%  ~~ If necessary, more details than the description above ~~
-}
+%}
 \value{
 \item{series}{Fractionally differenciated series.}
 \item{estimator}{Method used to estimate differencing parameter (\code{"Hurst"}, \code{"ML"}, \code{"GPH"}, or \code{"Sperio"})), prompts \code{"external"} if a differencing parameter was provided as numeric argument for \code{dval}.}
@@ -45,9 +45,9 @@ See those in \code{\link[fractal:hurstSpec]{hurstSpec}}, \code{\link[fracdiff:fr
 \author{
 Patrick Kraft
 }
-\note{
+%\note{
 %%  ~~further notes~~
-}
+%}
 
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 

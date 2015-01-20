@@ -4,10 +4,10 @@
 \alias{print.summary.arfimaOLS}
 \alias{summary.arfimaOLS}
 \title{
-ARFIMA-OLS estimation for repeated cross-sectional data and pooled cross-sectional time series data
+Arfima-OLS for repeated cross-sectional data and/or pooled cross-sectional time series data
 }
 \description{
-Fits an ARFIMA-OLS to a repeated cross-sectional dataset or a pooled cross-sectional time series dataset. For the variables specified by the user, the function automatically implements the aggregation and fractional differencing of time/level variables as well as the necessary procedures to remove deterministic components from the dependent as well as the major independent variables.
+Estimates Arfima-OLS for repeated cross-sectional data or pooled cross-sectional time series data. For the variables specified by the user, the function automatically implements the aggregation and fractional differencing of time/level variables as well as the necessary procedures to remove deterministic components from the dependent as well as the major independent variables.
 }
 \usage{
 arfimaOLS(formula, data, timevar
@@ -63,14 +63,14 @@ If the suffix \code{.ydif} is added to the dependent variable (e.g. \eqn{y[it]})
 }
 }
 \value{
-The function returns a list of the class 'arfimaMLM' with the following items:
+The function returns a list of the class 'arfimaOLS' with the following items:
 \item{result}{Output of the linear model as specified in \code{formula}.}
 \item{d}{Matrix of fractional differencing parameters estimated for the level variables (\code{.fd} and \code{.ydif}) as well as the estimation method for each variable. Returns the specified value for d if it was specified in the initial call of the function.}
 \item{arma}{List of \code{arima} results for each variable specified in the model call. Contains AR/MA estimates as well as the model residuals.}
 \item{ecm}{Output of the cointegration regression (returned if \code{ecmformula} is specified). The lagged residuals of the cointegration regression are included in the multilevel model if \code{ecm} is included in \code{formula}.}
 \item{data.mean}{Data frame of variable means declared in \code{formula} as \code{.fd}, \code{.xdif} or \code{.ydif} (as well as \code{.mean} in \code{ecmformula}) for each time point specified by the level variable in \code{timevar}.}
-\item{data.fd}{Data frame of fractionally differenced level variables declared in \code{formula} as \code{.fd} or \code{.ydif} for each time point specified by the level variable in \code{timevar}. If \code{arma} was additionally specified for a variable, it contains the residuals of the ARMA model fitted after (fractionally) differencing.}
-\item{data.merged}{Merged data frame used to estimate the multilevel model consisting of the original data, \code{data.mean}, \code{data.fd}, as well as the variables specified in \code{formula} as \code{.xdif} and \code{.ydif}}
+\item{data.fd}{Data frame of fractionally differenced level variables for each time point specified in \code{timevar}, which were declared as \code{.fd} or \code{.ydif} in \code{formula}. If \code{arma} was additionally specified for a variable, it contains the residuals of the ARMA model fitted after (fractionally) differencing.}
+\item{data.merged}{Merged data frame used to estimate the OLS model consisting of the original data, \code{data.mean}, \code{data.fd}, as well as the variables specified as \code{.xdif} and \code{.ydif} in \code{formula}}
 }
 \references{
 Lebo, M. and Weber, C. 2015. ``An Effective Approach to the Repeated Cross Sectional Design.'' American Journal of Political Science 59(1): 242-258.
@@ -78,9 +78,9 @@ Lebo, M. and Weber, C. 2015. ``An Effective Approach to the Repeated Cross Secti
 \author{
 Patrick Kraft
 }
-\note{
+%\note{
 %%  ~~further notes~~
-}
+%}
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
@@ -120,12 +120,15 @@ data$y <- (b1*data$x1-0.05*data$x2+0.3*rep(z1_t,each=n)
 m1 <- arfimaOLS(y.ydif ~ x1.xdif + x2 + z1.fd + z2.fd
                 , data = data, timevar = "time")
                 
-# model including error correction mechanism, change estimation method for differencing parameter for all variables
+# model including error correction mechanism
+# change estimation method for differencing parameter for all variables
 m2 <- arfimaOLS(y.ydif ~ x1.xdif + x2 + z1.fd + z2.fd + ecm
                 , data = data, timevar = "time", d="ML"
-                , ecmformula = y.mean ~ x1.mean, decm="Sperio")
+                , ecmformula = y.mean ~ x1.mean
+                , decm="Sperio")
                 
-# vary estimation method for differencing parameter between variables, specify AR/MA models
+# vary estimation method for differencing parameter between variables
+# specify AR/MA models
 m3 <- arfimaOLS(y.ydif ~ x1.xdif + x2 + z1.fd + z2.fd
                 , data = data, timevar = "time"
                 , d=list(y="ML", z1="Sperio", z2=0.25)

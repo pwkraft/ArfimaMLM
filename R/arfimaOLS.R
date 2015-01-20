@@ -1,3 +1,4 @@
+#' @export
 arfimaOLS <-
   function(formula, data, timevar
            , d="Hurst", arma=NULL
