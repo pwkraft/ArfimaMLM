@@ -3,7 +3,7 @@
 #' @importFrom fracdiff fdGPH
 #' @importFrom fracdiff fdSperio
 #' @importFrom fracdiff diffseries
-#' @importFrom fractal hurstSpec
+#' @import fractal
 fd.default <-
   function(x, dval="Hurst", ...) {  
   d.value <- NA

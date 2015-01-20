@@ -1,4 +1,5 @@
 #' @export
+#' @import lme4
 print.arfimaMLM <-
 function(x, ...){
   if(!is.null(x$ecm)){

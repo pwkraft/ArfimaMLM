@@ -4,10 +4,10 @@
 \alias{print.summary.arfimaMLM}
 \alias{summary.arfimaMLM}
 \title{
-Arfima-MLM for repeated cross-sectional data and pooled cross-sectional time series data
+Arfima-MLM for repeated cross-sectional data and pooled cross-sectional time-series data
 }
 \description{
-Estimates Arfima-MLM for repeated cross-sectional data or pooled cross-sectional time series data. For the variables specified by the user, the function automatically implements the aggregation and fractional differencing of time/level variables as well as the necessary procedures to remove deterministic components from the dependent as well as the major independent variables.
+Estimates Arfima-MLM model for repeated cross-sectional data or pooled cross-sectional time-series data. For the variables specified by the user, the function automatically implements the aggregation and fractional differencing of time/level variables as well as the necessary procedures to remove deterministic components from the dependent as well as the major independent variables.
 }
 \usage{
 arfimaMLM(formula, data, timevar

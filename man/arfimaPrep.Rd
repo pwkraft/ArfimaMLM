@@ -4,7 +4,7 @@
 Preparing a dataset for subsequent analysis accoring to the Arfima-MLM/Arfima-OLS framework
 }
 \description{
-This function prepares a repeated cross-sectional dataset or pooled cross-sectional time series data for subsequent analyses according to the Arfima-MLM/Arfima-OLS framework. This function is mainly used internally as part of \code{\link{arfimaMLM}} and \code{\link{arfimaOLS}}, but can also be used independently if the user prefers to separate the data preparation from the subsequent estimation of the multilevel (or simple linear) model. The function performs the aggregation and fractional differencing of time/level variables as well as the necessary procedures to remove deterministic components from the dependent as well as the major independent variables.
+This function prepares a repeated cross-sectional dataset or pooled cross-sectional time-series data for subsequent analyses according to the Arfima-MLM/Arfima-OLS framework. This function is mainly used internally as part of \code{\link{arfimaMLM}} and \code{\link{arfimaOLS}}, but can also be used independently if the user prefers to separate the data preparation from the subsequent estimation of the multilevel (or simple linear) model. The function performs the aggregation and fractional differencing of time/level variables as well as the necessary procedures to remove deterministic components from the dependent as well as the major independent variables.
 }
 \usage{
 arfimaPrep(data, timevar

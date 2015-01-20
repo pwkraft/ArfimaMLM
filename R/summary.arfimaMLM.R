@@ -1,4 +1,5 @@
 #' @export
+#' @import lme4
 summary.arfimaMLM <-
 function(object, ...){
   d<- object$d

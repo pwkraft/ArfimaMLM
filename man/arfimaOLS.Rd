@@ -4,10 +4,10 @@
 \alias{print.summary.arfimaOLS}
 \alias{summary.arfimaOLS}
 \title{
-Arfima-OLS for repeated cross-sectional data and/or pooled cross-sectional time series data
+Arfima-OLS for repeated cross-sectional data and/or pooled cross-sectional time-series data
 }
 \description{
-Estimates Arfima-OLS for repeated cross-sectional data or pooled cross-sectional time series data. For the variables specified by the user, the function automatically implements the aggregation and fractional differencing of time/level variables as well as the necessary procedures to remove deterministic components from the dependent as well as the major independent variables.
+Estimates Arfima-OLS model for repeated cross-sectional data or pooled cross-sectional time-series data. For the variables specified by the user, the function automatically implements the aggregation and fractional differencing of time/level variables as well as the necessary procedures to remove deterministic components from the dependent as well as the major independent variables.
 }
 \usage{
 arfimaOLS(formula, data, timevar
