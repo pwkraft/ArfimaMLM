@@ -1,7 +1,8 @@
 citHeader("For the underlying method, please cite the following paper")
 citEntry(entry="article",
   title = "An Effective Approach to the Repeated Cross-Sectional Design",
-  author = "Lebo, Matthew J and Weber, Christopher",
+  author = personList(as.person("Matthew J. Lebo"),
+                  as.person("Christopher Weber")), 
   journal = "American Journal of Political Science",
   year = "2015",
   volume = "59",

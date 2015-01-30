@@ -1,0 +1,269 @@
+\documentclass{beamer}
+\usepackage{xcolor}
+\usepackage{natbib} % package to organize literature
+\usepackage{multicol}
+\usepackage{booktabs}
+\usepackage{wasysym} % additional symbols
+\usepackage{graphicx} % to include graphics, gifs
+\usepackage{color} % add colored text
+\usepackage{lmodern} % to fix fint size error, might be problematic with math symbols
+\usepackage{array}
+\usepackage{amsmath}
+\usepackage{dcolumn}
+
+\usetheme{Frankfurt}
+%\usecolortheme{beaver}
+\setbeamertemplate{footline}
+{
+  \leavevmode%
+  \hbox{%
+  \begin{beamercolorbox}[wd=.3\paperwidth,ht=2.25ex,dp=1ex,center]{author in head/foot}%
+    \usebeamerfont{author in head/foot}\insertshortauthor \hspace{1em} %(\insertshortinstitute)
+  \end{beamercolorbox}%
+  \begin{beamercolorbox}[wd=.4\paperwidth,ht=2.25ex,dp=1ex,center]{title in head/foot}%
+    \usebeamerfont{title in head/foot}\insertshorttitle
+  \end{beamercolorbox}%
+  \begin{beamercolorbox}[wd=.3\paperwidth,ht=2.25ex,dp=1ex,right]{author in head/foot}%
+    \usebeamerfont{author in head/foot}\insertdate \hspace{2em}
+    \insertframenumber{} / \inserttotalframenumber\hspace*{1em}
+  \end{beamercolorbox}}%
+  \vskip0pt%
+}
+\definecolor{beamer@sbred}{rgb}{0.65,0.15,0.18}
+\setbeamercolor{title}{fg=beamer@sbred,bg=black!5}
+\setbeamercolor{structure}{fg=beamer@sbred}
+\setbeamercolor{frametitle}{fg=beamer@sbred}
+\setbeamercolor{palette primary}{fg=beamer@sbred,bg=black!10}
+\setbeamercolor{palette secondary}{fg=beamer@sbred}
+\setbeamercolor{palette tertiary}{bg=beamer@sbred}
+\setbeamercolor{palette quaternary}{fg=white,bg=beamer@sbred}
+\setbeamertemplate{itemize items}[default]
+\setbeamertemplate{enumerate items}[default]
+\setbeamersize{text margin left=1em,text margin right=1em}
+\DeclareTextFontCommand{\emph}{\color{beamer@sbred}}
+
+\author[Kraft, Weber, Lebo]{Patrick Kraft \and
+Christopher Weber \and
+Matthew Lebo}
+\institute{Stony Brook University \and
+University of Arizona}
+ \title{R Package ArfimaMLM}
+ \subtitle{An Effective Approach to the Repeated Cross-Sectional Design}
+ \date{\today}
+
+\begin{document}
+\frame{\titlepage}
+
+\section{Overview}
+\subsection{}
+\begin{frame}%[allowframbreaks]
+\frametitle{Introduction}
+\begin{itemize}
+\item Implementation of \emph{ArfimaMLM} approach presented by Lebo and Weber (``An Effective Approach to the Repeated Cross-Sectional Design'', \textit{AJPS} \citeyear{lebo2015effective}) in \texttt{R}.
+\item \emph{Basic idea}: Correcting for temporal autocorrelation in repeated cross-sectional data (as well as panel data).
+\item \emph{Key Aspects}:
+\begin{itemize}
+\item Individual observations are embedded within multiple, sequential time-points.
+\item Retrieve estimates at the individual-level and at the aggregate level.
+\item Allows use of variables that vary only within cross-sections and some that vary between cross-sections (e.g., unemployment rate)
+\item Box-Jenkins and fractional differencing techniques can control for autocorrelation at level-2. \citep[e.g.][]{box1996dynamics,lebo2000you,clarke2003fractional}
+\item Introduce double filtering to clean up two kinds of autocorrelation.
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+\subsection{}
+\begin{frame}[fragile]\scriptsize%[allowframbreaks]
+\frametitle{Description of Package}
+<<a,eval=FALSE,tidy=FALSE>>=
+arfimaMLM(formula, data, timevar
+          , d = "Hurst", arma = NULL
+          , ecmformula = NULL, decm = "Hurst"
+          , drop = 5, report.data = TRUE, ...)
+
+arfimaMLM(y.ydif ~ x1.xdif + x1.fd + x2 + z1.fd + z2.fd
+          + (1 | time)
+          , data = data, timevar = "time", ...)
+
+arfimaMLM(y.ydif ~ x1.xdif + x1.fd + x2 + z1.fd + z2.fd + ecm
+          + (1 | time)
+          , data = data, timevar = "time"
+          , d = "Sperio"
+          , ecmformula = y.mean ~ x1.mean
+          , decm = "ML", ...)
+
+arfimaMLM(y.ydif ~ x1.xdif + x1.fd + x2 + z1.fd + z2.fd + ecm
+          + (1 + x1.dif | time)
+          , data = data, timevar = "time"
+          , d = list(y = "Hurst", x1 = "GPH", z1 = "Sperio", z2 = 0.25)
+          , arma = list(y = c(1,0), z2 = c(0,1)), ...)
+@
+\end{frame}
+
+\section{Simulational Scenario}
+\subsection{}
+\begin{frame}%[allowframbreaks]
+\frametitle{Simulational Scenario}
+<<b,echo=FALSE>>=
+suppressPackageStartupMessages(library(ArfimaMLM))
+suppressPackageStartupMessages(library(fracdiff))
+suppressPackageStartupMessages(library(stargazer))
+
+# set basic parameters for simulation
+t = 100 # number of time points
+n = 500 # number of observations within time point
+N = t*n # total number of observations
+
+# generate fractional ARIMA Time Series for y, x1, z
+set.seed(123)
+y_t=fracdiff.sim(t, d=0.4, mu=10)$series
+x1_t=fracdiff.sim(t, d=0.3, mu=5)$series
+z1_t=fracdiff.sim(t, d=0.1, mu=2)$series
+z2_t=fracdiff.sim(t, d=0.25, mu=3)$series
+
+# generate predicted values for individuals
+data <- NULL; data$time <- rep(seq(1:t),each=n); data <- data.frame(data)
+data$x1 <- rnorm(N,rep(x1_t,each=n),2)
+data$x2 <- rnorm(N,0,40)
+data$z1 <- rnorm(N,rep(z1_t,each=n),3)
+data$z2 <- rep(z2_t,each=n)
+b1 <- 0.2+rep(rnorm(t,0,0.1),each=n)
+data$y <- (b1*data$x1-0.05*data$x2+0.3*rep(z1_t,each=n)
+           +0*data$z2+rnorm(N,rep(y_t,each=n),1))
+@
+
+\begin{itemize}
+\item \emph{Scenario}: repeated cross-sectional dataset with 100 timepoints and 500 units within each timepoint
+\item \emph{Independent variables:}
+\begin{itemize}
+\item $x_1 \sim \mathcal{N}(\mu=\bar{X}_{1t},\sigma^2=2)$; $\bar{X}_{1t}$ follows a fractionally integrated series with $d=0.3$ and a mean of 5
+\item $x_2 \sim \mathcal{N}(\mu=0,\sigma^2=40)$
+\item $z_1 \sim \mathcal{N}(\mu=\bar{Z}_{1t},\sigma^2=3)$; $\bar{Z}_{1t}$ follows a fractionally integrated series with $d=0.1$ and a mean of 2
+\item $Z_{2t}$ follows a fractionally integrated series with $d=0.25$ and a mean of 3 ($Z_{2t}$ does not differ within timepoints)
+\end{itemize}
+\item \emph{Dependent Variable}:
+\begin{align*}
+y &=\bar{Y}_t+\beta_{1t} * x_1 - 0.05 * x_2 + 0.3 * \bar{Z}_{1t} + 0 * Z_{2t} + \epsilon &\text{ , where} \nonumber \\
+\beta_{1t} &\sim \mathcal{N}(\mu=0.2,\sigma^2=0.1) & \nonumber \\
+\epsilon &\sim \mathcal{N}(\mu=0,\sigma^2=1), &
+\end{align*}
+\footnotesize{where $\bar{Y}_t$ follows a fractionally integrated series with $d=0.4$ and a mean of 10}
+\end{itemize}
+\end{frame}
+
+\subsection{}
+\begin{frame}[fragile]%[allowframbreaks]
+\frametitle{Data Overview I}
+<<c,comment=NA>>=
+data[496:505,]
+@
+\end{frame}
+
+\subsection{}
+\begin{frame}%[allowframbreaks]
+\frametitle{Data Overview II}
+\begin{figure}[ht]\centering
+\caption{Plot of Dependent Variable y Across Time}
+<<d,echo=FALSE,fig.height=2.5,fig.width=5, dev = 'png', dpi = 300>>=
+par(oma=c(0,0,0,0),mar=c(4,4,0.1,1))
+plot(data$y~data$time,col="grey",ylab="y",xlab="Time")
+lines(y_t,lwd=2)
+@
+\end{figure}
+\end{frame}
+
+\subsection{}
+\begin{frame}%[allowframbreaks]
+\frametitle{Data Overview III}
+\begin{figure}[ht]\centering
+\caption{Plot of Independent Variables Across Time}
+<<e,echo=FALSE,fig.height=2.5,fig.width=5, dev = 'png', dpi = 300>>=
+par(mfrow=c(1,2),oma=c(0,0,0,0),mar=c(4,4,0.25,1))
+plot(data$x1~data$time,col="grey",ylab="x1",xlab="Time")
+lines(x1_t,lwd=2)
+plot(data$x2~data$time,col="grey",ylab="x2",xlab="Time")
+lines(lowess(data$x2~data$time,f=0.001),lwd=2,ylab="x2",xlab="Time")
+@
+\end{figure}
+\end{frame}
+
+\subsection{}
+\begin{frame}%[allowframbreaks]
+\frametitle{Data Overview IV}
+\begin{figure}[ht]\centering
+\caption{Plot of Independent Variables Across Time}
+<<f,echo=FALSE,fig.height=2.5,fig.width=5, dev = 'png', dpi = 300>>=
+par(mfrow=c(1,2),oma=c(0,0,0,0),mar=c(4,4,0.25,1))
+plot(data$z1~data$time,col="grey",ylab="z1",xlab="Time")
+lines(z1_t,lwd=2)
+plot(data$z2~data$time,type="l",lwd=2,ylab="Z2",xlab="Time")
+par(mfrow=c(1,1))
+@
+\end{figure}
+\end{frame}
+
+\section{Model Estimation}
+\subsection{}
+\begin{frame}[fragile]%[allowframbreaks]
+\frametitle{Results without ArfimaMLM I}
+<<g,tidy=FALSE>>=
+m1a <- lm(y ~ x1 + x2 + z1 + z2, data = data)
+
+m1b <- lmer(y ~ x1 + x2 + z1 + z2
+            + (1 | time), data = data)
+
+m1c <- lmer(y ~ x1 + x2 + z1 + z2
+            + (1 + x1 | time), data = data)
+@
+\end{frame}
+
+\subsection{}
+\begin{frame}[fragile]\tiny%[allowframbreaks]
+\frametitle{Results without ArfimaMLM II}
+<<h,echo=FALSE,results='asis'>>=
+stargazer(m1a,m1b,m1c,title="Results for Simple OLS and Multilevel Model",no.space=T,keep.stat=c("n","rsq","ll","bic"),label="ols_mle",align=T)
+@
+\end{frame}
+
+\subsection{}
+\begin{frame}[fragile]%[allowframbreaks]
+\frametitle{Results using ArfimaMLM I}
+<<i,tidy=FALSE>>=
+m2a <- arfimaMLM(y.ydif ~ x1.xdif + x2 + z1.fd + z2.fd
+                + (1 | time)
+                , data = data, timevar = "time")
+
+m2b <- arfimaMLM(y.ydif ~ x1.xdif + x2 + z1.fd + z2.fd
+                 + (1 + x1.xdif | time)
+                , data = data, timevar = "time")
+@
+\end{frame}
+
+\subsection{}
+\begin{frame}[fragile]\tiny%[allowframbreaks]
+\frametitle{Results using ArfimaMLM II}
+<<j,echo=FALSE,results='asis'>>=
+stargazer(m2a$result,m2b$result,title="Results for ArfimaMLM",no.space=T,label="arfimamlm",align=T)
+@
+\end{frame}
+
+\subsection{}
+\begin{frame}
+\frametitle{Getting the Package}
+\begin{itemize}
+\item on CRAN: \url{http://cran.r-project.org/web/packages/ArfimaMLM/}
+\item on GitHub (development version): \url{https://github.com/pwkraft/ArfimaMLM/}
+\end{itemize}
+\end{frame}
+
+ \begin{frame}
+   \frametitle{References}
+   \def\newblock{\hskip .11em plus .33em minus .07em}
+   %\nocite{*}
+ %  \begin{tiny}
+   \bibliographystyle{apsr}
+   \bibliography{Literature}
+ %  \end{tiny}
+ \end{frame}
+
+\end{document}

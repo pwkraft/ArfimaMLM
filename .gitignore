@@ -9,3 +9,21 @@
 
 # swap files
 .swp
+
+memo
+/info/
+*.RData
+*.Rdata
+*.log
+*.out
+*.aux
+*.bbl
+*.blg
+*.tar.gz
+*.fdb_latexmk
+*.synctex.gz
+*.nav
+*.snm
+*.toc
+*concordance.tex
+*.vrb
