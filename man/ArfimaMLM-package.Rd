@@ -12,7 +12,7 @@ This package provides functions to facilitate the estimation of Arfima-MLM model
 \tabular{ll}{
 Package: \tab ArfimaMLM\cr
 Type: \tab Package\cr
-Version: \tab 1.3\cr
+Version: \tab 1.3.1\cr
 Date: \tab 2015-01-20\cr
 License: \tab GPL-2\cr
 }

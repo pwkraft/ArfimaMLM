@@ -5,21 +5,21 @@ arfimaPrep <-
     # warnings / error messages
     if(missing(timevar)) stop("timevar must be specified!")
     if(length(unique(diff(sort(unique(data[,timevar])))))>1) warning("Time series is not evenly spaced!")
-    
+
     # step 1: aggregate .dif+.fd variables over timevar
     data.mean <- NULL
     if (length(varlist.mean)>0){
       data.mean <- aggregate(data[,varlist.mean],list(data[,timevar]), mean, na.rm=T)
       if (length(varlist.mean)==1) names(data.mean)[2] <- varlist.mean
     }
-    
+
     # step 2: fractionally difference .fd variables (see fd function)
     data.fd=NULL; res.d=NULL
     if (length(varlist.fd)>0){
       data.fd <- data.frame(cbind(data.mean[,1],data.mean[,varlist.fd]))
       if (length(varlist.fd)==1) names(data.fd)[2] <- varlist.fd
-      
-      if(is.character(d)) {
+
+      if(length(d) == 1) {
         for(i in 1:length(varlist.fd)){
           tmp <- fd(data.mean[,varlist.fd[i]],dval=d)
           data.fd[,varlist.fd[i]] <- tmp$series
@@ -37,7 +37,7 @@ arfimaPrep <-
         }
       } else stop("List of d-parameters does not have correct length!")
     }
-    
+
     # step 3: estimate AR/MA parameter for selected variables
     res.arma <- NULL
     if(!is.null(arma)){
@@ -52,7 +52,7 @@ arfimaPrep <-
                            , include.mean = FALSE)
           }
           if(class(arma[[i]])=="list"){
-            if (max(arma[[i]][[1]]) == length(arma[[i]][[1]]) & 
+            if (max(arma[[i]][[1]]) == length(arma[[i]][[1]]) &
 	    max(arma[[i]][[2]]) == length(arma[[i]][[2]])) {
                 tmp <- arima(data.fd[,names(arma)[i]]
                            , order=c(max(arma[[i]][[1]]),0,max(arma[[i]][[2]]))
@@ -63,7 +63,7 @@ arfimaPrep <-
                 tmp <- arima(data.fd[,names(arma)[i]]
                            , order=c(max(arma[[i]][[1]]),0,max(arma[[i]][[2]]))
                            , include.mean = FALSE
-                           , fixed = fixed, transform.pars = FALSE)	
+                           , fixed = fixed, transform.pars = FALSE)
             }
           }
 	data.fd[,names(arma[i])] <- tmp$residuals
@@ -72,7 +72,7 @@ arfimaPrep <-
         rm(tmp)
       }
     }
-    
+
     # step 4: adjust varnames
     if (!is.null(data.mean)){
       names(data.mean) <- paste0(names(data.mean),".mean")
@@ -82,7 +82,7 @@ arfimaPrep <-
       names(data.fd) <- paste0(names(data.fd),".fd")
       names(data.fd)[1] <- timevar
     }
-    
+
     # step 5: calculate ecm
     res.ecm=NULL
     if (!is.null(ecmformula)){
@@ -94,7 +94,7 @@ arfimaPrep <-
       res.d <- rbind(res.d,c("ecm",tmp$estimator,tmp$value))
       rm(tmp)
     }
-    
+
     # step 6: merge datasets
     if (!is.null(data.fd)){
       data.merged <- merge(data.mean, data.fd, by=timevar)
@@ -104,7 +104,7 @@ arfimaPrep <-
       data.merged <- merge(data, data.mean, by=timevar)
     }
     else data.merged <- data
-    
+
     # step 7: calculate dif value for dv
     if (length(varlist.ydif)>0){
       for (i in 1:length(varlist.ydif)){
@@ -117,7 +117,7 @@ arfimaPrep <-
       names(data.merged)[(ncol(data.merged)
                          -length(varlist.ydif)+1):ncol(data.merged)] <- paste0(varlist.ydif,".ydif")
     }
-    
+
     # step 8: calculate dif values for ivs
     if (length(varlist.xdif)>0){
       for (i in 1:length(varlist.xdif)){
@@ -128,11 +128,11 @@ arfimaPrep <-
       names(data.merged)[(ncol(data.merged)
                           -length(varlist.xdif)+1):ncol(data.merged)] <- paste0(varlist.xdif,".xdif")
     }
-    
+
     # step 9: drop certain number of initial observations
     data.merged <- subset(data.merged
                           , data.merged[,timevar]>(min(data.merged[,timevar])+drop-1))
-    
+
     # return data
     if (!is.null(res.d)){
       rownames(res.d) <- res.d[,1]

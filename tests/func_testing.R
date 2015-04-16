@@ -4,7 +4,7 @@ detach("package:ArfimaMLM", unload=TRUE)
 require(fracdiff)
 require(lme4)
 require(fractal)
-setwd("/data/Dropbox/packages/ArfimaMLM/ArfimaMLM/R")
+setwd("/data/Copy/packages/ArfimaMLM/ArfimaMLM/R")
 for(func in dir()){
   source(func)
 }
@@ -36,6 +36,8 @@ data$y <- (b1*data$x1-0.05*data$x2+0.3*rep(z1_t,each=n)
 # estimate models
 m1 <- arfimaMLM(y.ydif ~ x1.xdif + x2 + z1.fd + z2.fd +(1|time), timevar="time"
                 ,data=data ,d="ML")
+m1b <- arfimaMLM(y.ydif ~ x1.xdif + x2 + z1.fd + z2.fd +(1|time), timevar="time"
+                ,data=data ,d=0)
 m2 <- arfimaMLM(y.ydif ~ x1.xdif + x2 + z1.fd + z2.fd + ecm + (1|time), timevar="time"
                 , ecmformula = y.mean ~ x1.mean
                 , d=list(y="ML", z1="Sperio", z2=0.25)
@@ -88,3 +90,11 @@ m10 <- arfimaMLM(y.ydif ~ x1.xdif + x2 + z1.fd + z2.fd + ecm + (1|time), timevar
 
 summary(m9)
 summary(m10)
+
+### test github version
+
+library(devtools)
+install_github("pwkraft/ArfimaMLM")
+library(ArfimaMLM)
+
+
