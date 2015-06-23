@@ -4,8 +4,10 @@
 # Example code in package build process
 *-Ex.R
 
-# temporary files
+# temporary/autosave files
 *~
+*#
+.#*
 
 # swap files
 .swp
