@@ -9,7 +9,8 @@ arfimaPrep <-
     # step 1: aggregate .dif+.fd variables over timevar
     data.mean <- NULL
     if (length(varlist.mean)>0){
-      data.mean <- aggregate(data[,varlist.mean],list(data[,timevar]), mean, na.rm=T)
+      data.mean <- na.omit(data[,c(varlist.mean,timevar)])
+      data.mean <- aggregate(na.omit(data.mean[,varlist.mean]),list(data.mean[,timevar]), mean)
       if (length(varlist.mean)==1) names(data.mean)[2] <- varlist.mean
     }
 

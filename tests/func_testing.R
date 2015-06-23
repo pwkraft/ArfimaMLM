@@ -33,6 +33,9 @@ b1 <- 0.2+rep(rnorm(t,0,0.1),each=n)
 data$y <- (b1*data$x1-0.05*data$x2+0.3*rep(z1_t,each=n)
            +0*data$z2+rnorm(N,rep(y_t,each=n),1))
 
+# introduce gap in time series
+data <- data[data$time != 10,]
+
 # estimate models
 m1 <- arfimaMLM(y.ydif ~ x1.xdif + x2 + z1.fd + z2.fd +(1|time), timevar="time"
                 ,data=data ,d="ML")
