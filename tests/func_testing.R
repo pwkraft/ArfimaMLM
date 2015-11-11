@@ -4,6 +4,8 @@ detach("package:ArfimaMLM", unload=TRUE)
 require(fracdiff)
 require(lme4)
 require(fractal)
+
+# load functions from local directory
 setwd("/data/Copy/packages/ArfimaMLM/ArfimaMLM/R")
 for(func in dir()){
   source(func)
