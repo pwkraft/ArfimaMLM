@@ -16,7 +16,7 @@ The main function of the package is `arfimaMLM`, which implements ARFIMA and mul
 
 Authors
 -------
-Patrick Kraft, with contributions from Christopher Weber
+Patrick Kraft, with contributions from Christopher Weber and Taylor Grant
 
 Maintainer: Patrick Kraft 
 

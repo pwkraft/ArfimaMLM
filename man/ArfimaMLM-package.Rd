@@ -19,7 +19,7 @@ License: \tab GPL-2\cr
 The main function of the package is \code{\link[ArfimaMLM:arfimaMLM]{arfimaMLM}}, which implements Arfima and multilevel models on a repeated cross-sectional dataset as described by Lebo and Weber (forthcoming). Furthermore, the function \code{\link[ArfimaMLM:arfimaOLS]{arfimaOLS}} uses the same initial procedures but estimates a simple linear model instead of the multilevel model. The package also includes \code{\link[ArfimaMLM:arfimaPrep]{arfimaPrep}}, which prepares a dataset for subsequent analyses according to the Arfima-MLM framework without estimating the final model itself. \code{\link[ArfimaMLM:arfimaMLM]{fd}} is a wrapper function to estimate the fractional differencing parameter using \code{\link[fractal:hurstSpec]{hurstSpec}} of the \code{fractal}-package as well as procedures provided by the \code{\link[fracdiff:fracdiff]{fracdiff}}-package (via ML, GPH, and Sperio) and to differentiate the series accordingly (mainly for internal use in \code{arfimaMLM},\code{arfimaOLS}, and \code{arfimaPrep}).
 }
 \author{
-Patrick Kraft, with contributions from Christopher Weber
+Patrick Kraft, with contributions from Christopher Weber and Taylor Grant
 
 Maintainer: Patrick Kraft <patrick.kraft@stonybrook.edu>
 }
