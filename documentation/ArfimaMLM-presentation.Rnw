@@ -1,12 +1,12 @@
 \documentclass{beamer}
 \usepackage{xcolor}
-\usepackage{natbib} % package to organize literature
+\usepackage{natbib}
 \usepackage{multicol}
 \usepackage{booktabs}
-\usepackage{wasysym} % additional symbols
-\usepackage{graphicx} % to include graphics, gifs
-\usepackage{color} % add colored text
-\usepackage{lmodern} % to fix fint size error, might be problematic with math symbols
+\usepackage{wasysym}
+\usepackage{graphicx}
+\usepackage{color}
+\usepackage{lmodern}
 \usepackage{array}
 \usepackage{amsmath}
 \usepackage{dcolumn}
@@ -256,13 +256,24 @@ stargazer(m2a$result,m2b$result,title="Results for ArfimaMLM",no.space=T,label="
 \end{itemize}
 \end{frame}
 
+\subsection{}
+\begin{frame}
+\frametitle{Current and Future Work}
+\begin{itemize}
+\item Implement new estimator for fractional differencing parameter $d$ (whittleFML)
+\item Simultaneous estimation in Stan
+\item ArfimaMLM for categorical outcomes
+\item Other improvements (better output, integrate pacf plots etc.)
+\end{itemize}
+\end{frame}
+
  \begin{frame}
    \frametitle{References}
    \def\newblock{\hskip .11em plus .33em minus .07em}
    %\nocite{*}
  %  \begin{tiny}
-   \bibliographystyle{apsr}
-   \bibliography{Literature}
+   \bibliographystyle{/data/Copy/1-src/lit/apsr}
+   \bibliography{/data/Copy/1-src/lit/Literature}
  %  \end{tiny}
  \end{frame}
 

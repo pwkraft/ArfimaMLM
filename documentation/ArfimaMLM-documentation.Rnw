@@ -27,8 +27,7 @@ Matthew Lebo\textsuperscript{1}}
 \institution{\textsuperscript{1}Stony Brook University \and
 \textsuperscript{2}University of Arizona}
 \title{The ArfimaMLM Package for R}
-\subtitle{Version 1.3}
-\date{January 19, 2015}
+\subtitle{Version 1.3\\\footnotesize{(last update \today)}}
 
 \begin{document}
 
@@ -42,7 +41,7 @@ Matthew Lebo\textsuperscript{1}}
 
 \hrule
 \begin{abstract}
-\texttt{ArfimaMLM} provides functions to facilitate the estimation of Arfima-MLM for repeated cross-sectional data and pooled cross-sectional time series data. The estimation procedure uses double filtering with Arfima methods to account for autocorrelation in longer RCS followed by the use of multilevel modeling (MLM) to estimate both aggregate- and individual-level parameters simultaneously. This documentation provides a brief description of the general approach, as well as an  introduction of possible model specifications. The main function of the package is \texttt{arfimaMLM}, which implements Arfima and multilevel models on a repeated cross-sectional dataset as described by Lebo and Weber (forthcoming). Furthermore, the function \texttt{arfimaOLS} uses the same initial procedures but estimates a simple linear model instead of the multilevel model. The package also includes \texttt{arfimaPrep}, which prepares a dataset for subsequent analyses according to the Arfima-MLM framework without estimating the final model itself. \texttt{fd} is a wrapper function to estimate the fractional differencing parameter using \texttt{hurstSpec} of the \texttt{fractal}-package as well as procedures provided by the \texttt{fracdiff}-package (via ML, GPH, and Sperio) and to differentiate the series accordingly (mainly for internal use in \texttt{arfimaMLM},\texttt{arfimaOLS}, and \texttt{arfimaPrep}).
+\texttt{ArfimaMLM} provides functions to facilitate the estimation of Arfima-MLM for repeated cross-sectional data and pooled cross-sectional time series data. The estimation procedure uses double filtering with Arfima methods to account for autocorrelation in longer RCS followed by the use of multilevel modeling (MLM) to estimate both aggregate- and individual-level parameters simultaneously. This documentation provides a brief description of the general approach, as well as an  introduction of possible model specifications. The main function of the package is \texttt{arfimaMLM}, which implements Arfima and multilevel models on a repeated cross-sectional dataset as described by \citet{lebo2015effective}. Furthermore, the function \texttt{arfimaOLS} uses the same initial procedures but estimates a simple linear model instead of the multilevel model. The package also includes \texttt{arfimaPrep}, which prepares a dataset for subsequent analyses according to the Arfima-MLM framework without estimating the final model itself. \texttt{fd} is a wrapper function to estimate the fractional differencing parameter using \texttt{hurstSpec} of the \texttt{fractal}-package as well as procedures provided by the \texttt{fracdiff}-package (via ML, GPH, and Sperio) and to differentiate the series accordingly (mainly for internal use in \texttt{arfimaMLM},\texttt{arfimaOLS}, and \texttt{arfimaPrep}).
 \end{abstract}
 
 \begin{keywords}
@@ -361,6 +360,6 @@ summary(m2)
 
 Again, the estimate for \texttt{z1} appears to be closer to its true value as compared to the original OLS results. However, since we did not properly take into account the multilevel structure as in \texttt{arfimaMLM}, the coefficient for \texttt{z2} still remains significant (albeit being closer to zero than the coefficient reported in Table~\ref{tab:ols}).
 
-\bibliographystyle{apsr}
-\bibliography{Literature}
+\bibliographystyle{/data/Copy/1-src/lit/apsr}
+\bibliography{/data/Copy/1-src/lit/Literature}
 \end{document}
