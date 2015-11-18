@@ -27,8 +27,7 @@ Matthew Lebo\textsuperscript{1}}
 \institution{\textsuperscript{1}Stony Brook University \and
 \textsuperscript{2}University of Arizona}
 \title{The ArfimaMLM Package for R}
-\subtitle{Version 1.3}
-\date{January 19, 2015}
+\subtitle{Version 1.3\\\footnotesize{(last update \today)}}
 
 \begin{document}
 
@@ -42,7 +41,7 @@ Matthew Lebo\textsuperscript{1}}
 
 \hrule
 \begin{abstract}
-\texttt{ArfimaMLM} provides functions to facilitate the estimation of Arfima-MLM for repeated cross-sectional data and pooled cross-sectional time series data. The estimation procedure uses double filtering with Arfima methods to account for autocorrelation in longer RCS followed by the use of multilevel modeling (MLM) to estimate both aggregate- and individual-level parameters simultaneously. This documentation provides a brief description of the general approach, as well as an  introduction of possible model specifications. The main function of the package is \texttt{arfimaMLM}, which implements Arfima and multilevel models on a repeated cross-sectional dataset as described by Lebo and Weber (forthcoming). Furthermore, the function \texttt{arfimaOLS} uses the same initial procedures but estimates a simple linear model instead of the multilevel model. The package also includes \texttt{arfimaPrep}, which prepares a dataset for subsequent analyses according to the Arfima-MLM framework without estimating the final model itself. \texttt{fd} is a wrapper function to estimate the fractional differencing parameter using \texttt{hurstSpec} of the \texttt{fractal}-package as well as procedures provided by the \texttt{fracdiff}-package (via ML, GPH, and Sperio) and to differentiate the series accordingly (mainly for internal use in \texttt{arfimaMLM},\texttt{arfimaOLS}, and \texttt{arfimaPrep}).
+\texttt{ArfimaMLM} provides functions to facilitate the estimation of Arfima-MLM for repeated cross-sectional data and pooled cross-sectional time series data. The estimation procedure uses double filtering with Arfima methods to account for autocorrelation in longer RCS followed by the use of multilevel modeling (MLM) to estimate both aggregate- and individual-level parameters simultaneously. This documentation provides a brief description of the general approach, as well as an  introduction of possible model specifications. The main function of the package is \texttt{arfimaMLM}, which implements Arfima and multilevel models on a repeated cross-sectional dataset as described by \citet{lebo2015effective}. Furthermore, the function \texttt{arfimaOLS} uses the same initial procedures but estimates a simple linear model instead of the multilevel model. The package also includes \texttt{arfimaPrep}, which prepares a dataset for subsequent analyses according to the Arfima-MLM framework without estimating the final model itself. \texttt{fd} is a wrapper function to estimate the fractional differencing parameter using \texttt{hurstSpec} of the \texttt{fractal}-package as well as procedures provided by the \texttt{fracdiff}-package (via ML, GPH, and Sperio) and to differentiate the series accordingly (mainly for internal use in \texttt{arfimaMLM},\texttt{arfimaOLS}, and \texttt{arfimaPrep}).
 \end{abstract}
 
 \begin{keywords}
@@ -57,14 +56,14 @@ Matthew Lebo\textsuperscript{1}}
 
 \section{Introduction}
 
-\citet{lebo2015effective} presented Arfima-MLM as a new framework for the analysis of repeated cross-sectional (RCS) data. The authors argued that previous methods either fail to account for possible autocorrelation in datasets with many timepoints, or do not allow for the simultaneous estimation of aggregate- and individual-level parameters. The method suggested by \citet{lebo2015effective} employs double filtering with Arfima methods to remove temporally deterministic components from the variables of interest. After purging potential autocorrelations, a multilevel model (MLM) is used to estimate the parameters for both, the individual as well as the (aggregate) temporal level variables.
+\citet{lebo2015effective} presented Arfima-MLM as a new framework for the analysis of repeated cross-sectional (RCS) data. The authors argued that previous methods either fail to account for possible autocorrelation in datasets with many time points, or do not allow for the simultaneous estimation of aggregate- and individual-level parameters. The method suggested by \citet{lebo2015effective} employs double filtering with Arfima methods to remove temporally deterministic components from the variables of interest. After purging potential autocorrelations, a multilevel model (MLM) is used to estimate the parameters for both, the individual as well as the (aggregate) temporal level variables.
 
 The paper presented here describes the \texttt{ArfimaMLM}-package for the statistical software \texttt{R}, which allows for an easy implementation of the procedures described by \citet{lebo2015effective}. The paper proceeds as follows: the first section will briefly summarize the statistical approach presented by \citet{lebo2015effective}. The following section introduces the \texttt{ArfimaMLM}-package, describes the necessary steps for installation, and provides an overview over the general usage of the package. Subsequently, the package will be applied to a simulated dataset.
 
 
 \section{Arfima-MLM - Overview}
 
-Statistical analyses in political science are often based on data following a repeated cross-sectional designs. Common examples can be found in survey research, such as the National Annenberg Election Study, the American National Election Studies, or Gallup polls, or other types of data such as congressional roll-calls  and Supreme Court cases (see \citealt{lebo2015effective}). Overall, repeated cross-sectional data structures can be characterized by the fact that individual observations are nested within time. However, in contrast to a panel structure, each unit is only included in the dataset at a single point in time. As \citet{lebo2015effective} point out, previous analyses that did not rely on multilevel models usually focused on either the aggregate- or the individual level when analyzing repeated cross-sectional data, which can lead to incorrect standard errors (in the case of pooling) or a significant information loss (in the case of aggregating over timepoints). Multilevel modeling overcomes this dichotomy between individual and aggregate perspectives since it allows for the estimation of parameters on both levels. However, a simple multilevel model that does not take into account potential deterministic components on the aggregate level might still yield biased or inconsistent results.
+Statistical analyses in political science are often based on data following a repeated cross-sectional designs. Common examples can be found in survey research, such as the National Annenberg Election Study, the American National Election Studies, or Gallup polls, or other types of data such as congressional roll-calls  and Supreme Court cases (see \citealt{lebo2015effective}). Overall, repeated cross-sectional data structures can be characterized by the fact that individual observations are nested within time. However, in contrast to a panel structure, each unit is only included in the dataset at a single point in time. As \citet{lebo2015effective} point out, previous analyses that did not rely on multilevel models usually focused on either the aggregate- or the individual level when analyzing repeated cross-sectional data, which can lead to incorrect standard errors (in the case of pooling) or a significant information loss (in the case of aggregating over time points). Multilevel modeling overcomes this dichotomy between individual and aggregate perspectives since it allows for the estimation of parameters on both levels. However, a simple multilevel model that does not take into account potential deterministic components on the aggregate level might still yield biased or inconsistent results.
 
 The estimation procedure suggested by \citet{lebo2015effective} combines established approaches used to analyze long time series and multilevel modeling in order to account for potential autocorrelations on the aggregate level.
 
@@ -72,26 +71,26 @@ The first step of the Arfima-MLM approach consists of the estimation of fraction
 \begin{equation}
 \bar{Y}^*_t=(1-L)^d\bar{Y}_t,
 \end{equation}
-where $\bar{Y}^*_t$ is the stationary series free of autocorrelation, $L$ is a lag operator, $d$ is the fractional diffferencing parameter, and $\bar{Y}_t$ is the original series of level means of $Y$ at time $t$. Furthermore, the procedure described by \citet{lebo2015effective} includes the estimation of AR and MA parameters as part of the Arfima ($p$,$d$,$q$) model. The fractional differencing and modeling of AR and MA parameters described above is employed for the dependent variable as well as all remaining independent aggregate-level variables included in the analyses (see \citealt{lebo2015effective} for a more detailed discussion of the approach).
+where $\bar{Y}^*_t$ is the stationary series free of autocorrelation, $L$ is a lag operator, $d$ is the fractional differencing parameter, and $\bar{Y}_t$ is the original series of level means of $Y$ at time $t$. Furthermore, the procedure described by \citet{lebo2015effective} includes the estimation of AR and MA parameters as part of the Arfima ($p$,$d$,$q$) model. The fractional differencing and modeling of AR and MA parameters described above is employed for the dependent variable as well as all remaining independent aggregate-level variables included in the analyses (see \citealt{lebo2015effective} for a more detailed discussion of the approach).
 
-In the following step, the individual-level variables are purged from serial correlation on the aggregate level. For the dependent variable, this is done by substracting the daily deterministic component ($\bar{Y}_t-\bar{Y}^*_t$) from the individual-level values:
+In the following step, the individual-level variables are purged from serial correlation on the aggregate level. For the dependent variable, this is done by subtracting the daily deterministic component ($\bar{Y}_t-\bar{Y}^*_t$) from the individual-level values:
 \begin{equation}
 y_{it}^{**}=y_{it}-(\bar{Y}_t-\bar{Y}^*_t),\label{eq:ydif}
 \end{equation}
-where $y_{it}^{**}$ consists of the within-timepoint, as well as the white-noise between-timepoint variation.
+where $y_{it}^{**}$ consists of the within-time point, as well as the white-noise between-time point variation.
 
-In order to remove potential autocorrelation from indepedent (individual-level) variables, the within-timepoint variation is calculated by substracting the respective level means at time $t$,
+In order to remove potential autocorrelation from independent (individual-level) variables, the within-time point variation is calculated by subtracting the respective level means at time $t$,
 \begin{equation}
 x_{it}^{**}=x_{it}-\bar{X}_t,\label{eq:xdif}
 \end{equation}
-where $x_{it}^{**}$ is the within-timepoint variation of $x_{it}$, $x_{it}$ is the original individual-level variable, and $\bar{X}_t$ is the variable's level mean at time $t$.
+where $x_{it}^{**}$ is the within-time point variation of $x_{it}$, $x_{it}$ is the original individual-level variable, and $\bar{X}_t$ is the variable's level mean at time $t$.
 
 After applying this double-filtering procedure to the variables of interest, the multilevel model can be specified. Consider an example with a dependent variable $y_{it}$, an independent variable $x_{it}$ (both of which are filtered according to the procedure outlined above), as well as a aggregate-level variable Z (which does not vary within time-points). The respective model can be described as follows \citep{lebo2015effective}:
 \begin{align}
 y_{it}^{**}&=\alpha_{1t}+\beta_1 x_{it}^{**} + \epsilon_{1it} \label{eq:model}\\
 \alpha_{1t}&=\alpha_{2t}+\beta_2 \bar{X}_{t}^{*} + \gamma Z_t^* + \epsilon_{2t},
 \end{align}
-where $y_{it}^{**}$ are the double filtered values for $y_{it}$, $x_{it}^{**}$ are the within-timepoint variations of $x_{it}$, $\bar{X}_{t}^{*}$ is the fractionally differenced series of $\bar{X}_t$, and $Z_t^*$ is the fractionally differenced series of $Z_t$. As described by \citet{lebo2015effective}, equation~\eqref{eq:model} can be further expanded to incorporate time-varying coefficients at the individual level, e.g. by letting the coefficient for $x_{it}^{**}$ vary across timepoints:
+where $y_{it}^{**}$ are the double filtered values for $y_{it}$, $x_{it}^{**}$ are the within-time point variations of $x_{it}$, $\bar{X}_{t}^{*}$ is the fractionally differenced series of $\bar{X}_t$, and $Z_t^*$ is the fractionally differenced series of $Z_t$. As described by \citet{lebo2015effective}, equation~\eqref{eq:model} can be further expanded to incorporate time-varying coefficients at the individual level, e.g. by letting the coefficient for $x_{it}^{**}$ vary across time points:
 \begin{equation}
 y_{it}^{**}=\alpha_{1t}+\beta_t x_{it}^{**} + \epsilon_{1it}
 \end{equation}
@@ -162,15 +161,15 @@ data$y <- (b1*data$x1-0.05*data$x2+0.3*rep(z1_t,each=n)
            +0*data$z2+rnorm(N,rep(y_t,each=n),1))
 @
 
-In order to demonstrate the usage of the \texttt{arfimaMLM} command, we constructed a simulational scenario of a repeated cross-sectional dataset with 100 timepoints and 500 units within each timepoint. The dataset contains four different independent variables: $x_1$, $x_2$, $z_1$, and $Z_2$. $x_1$ is normally distributed with mean $\bar{X}_{1t}$ and a standard deviation of 2. Across timepoints $t$, $\bar{X}_{1t}$ follows a fractionally integrated series with $d=0.3$ and a mean of 5. $x_2$ is normally distributed with a mean of 0 and a standard deviation of 40. The mean of $x_2$ is constant across all timepoints. $z_1$ is constructed similar to $x_1$: the variable is normally distributed with a mean of $\bar{Z}_{1t}$ and a standard deviation of 3. $\bar{Z}_{1t}$ follows a fractionally integrated series with $d=0.1$ and a mean of 2. $Z_{2t}$ follows a fractionally integrated series with $d=0.25$ and a mean of 3. $Z_{2t}$ does not differ within timepoints. The dependent variable $y$ is constructed as follows:
+In order to demonstrate the usage of the \texttt{arfimaMLM} command, we constructed a simulational scenario of a repeated cross-sectional dataset with 100 time points and 500 units within each time point. The dataset contains four different independent variables: $x_1$, $x_2$, $z_1$, and $Z_2$. $x_1$ is normally distributed with mean $\bar{X}_{1t}$ and a standard deviation of 2. Across time points $t$, $\bar{X}_{1t}$ follows a fractionally integrated series with $d=0.3$ and a mean of 5. $x_2$ is normally distributed with a mean of 0 and a standard deviation of 40. The mean of $x_2$ is constant across all time points. $z_1$ is constructed similar to $x_1$: the variable is normally distributed with a mean of $\bar{Z}_{1t}$ and a standard deviation of 3. $\bar{Z}_{1t}$ follows a fractionally integrated series with $d=0.1$ and a mean of 2. $Z_{2t}$ follows a fractionally integrated series with $d=0.25$ and a mean of 3. $Z_{2t}$ does not differ within time points. The dependent variable $y$ is constructed as follows:
 \begin{align}
 y &=\bar{Y}_t+\beta_{1t} * x_1 - 0.05 * x_2 + 0.3 * \bar{Z}_{1t} + 0 * Z_{2t} + \epsilon &\text{ , where} \nonumber \\
 \beta_{1t} &\sim N(0.2,\sigma^2=0.1) & \nonumber \\
 \epsilon &\sim N(0,\sigma^2=1), &
 \end{align}
-where $\bar{Y}_t$ follows a fractionally integrated series with $d=0.4$ and a mean of 10. Note that $\beta_{1t}$ is a random coefficient that varies between timepoints and that the level variable $Z_{2t}$ actually has \textit{no} effect on $y$. In the dataset, we observe the the following variables: $y$, $x_1$, $x_2$, and $z_1$ for each individual $i$, as well as $Z_{2t}$ for each timepoint $t$. It is worth noting that in this scenario, it is the aggregate level at time $t$ of $z_1$ that affects $y$, while we measure the variable on an individual level. This aspect was included to demonstrate the possibility of testing aggregate level hypotheses based on individual level data within the \texttt{arfimaMLM} package without prior data manipulations.
+where $\bar{Y}_t$ follows a fractionally integrated series with $d=0.4$ and a mean of 10. Note that $\beta_{1t}$ is a random coefficient that varies between time points and that the level variable $Z_{2t}$ actually has \textit{no} effect on $y$. In the dataset, we observe the the following variables: $y$, $x_1$, $x_2$, and $z_1$ for each individual $i$, as well as $Z_{2t}$ for each time point $t$. It is worth noting that in this scenario, it is the aggregate level at time $t$ of $z_1$ that affects $y$, while we measure the variable on an individual level. This aspect was included to demonstrate the possibility of testing aggregate level hypotheses based on individual level data within the \texttt{arfimaMLM} package without prior data manipulations.
 
-The following figures provide an overview over the data simulated for further analyses. Figure~\ref{fig:dv} displays the individual level datapoints for $y$ as well as the underlying fractionally integrated mean $\bar{Y}_t$.
+The following figures provide an overview over the data simulated for further analyses. Figure~\ref{fig:dv} displays the individual level data points for $y$ as well as the underlying fractionally integrated mean $\bar{Y}_t$.
 
 \begin{figure}[ht]\centering
 \caption{Plot of Dependent Variable y Across Time}\label{fig:dv}
@@ -198,19 +197,19 @@ par(mfrow=c(1,1))
 @
 \end{figure}
 
-Both individual level variables that were specified to follow an underlying fractionally integrated mean ($x_1$ and $z_1$) show the same pattern as the dependent variable $y$. As specified in the model, the mean of $x_2$ does not vary across timepoints. For $Z_2$, no individual level variables are observed, so the plot only displays the respective level means at time $t$.
+Both individual level variables that were specified to follow an underlying fractionally integrated mean ($x_1$ and $z_1$) show the same pattern as the dependent variable $y$. As specified in the model, the mean of $x_2$ does not vary across time points. For $Z_2$, no individual level variables are observed, so the plot only displays the respective level means at time $t$.
 
 After presenting the simulational scenario, we will now turn to the discussion of the model estimation.
 
 \subsection{Model Estimation}
 
-As already outlined above, the dataset only contains the following variables $x_1$, $x_2$, $z_1$, $Z_2$ and $y$. Calling the head of the dataframe in \texttt{R} yields the following output:
+As already outlined above, the dataset only contains the following variables $x_1$, $x_2$, $z_1$, $Z_2$ and $y$. Calling the head of the data frame in \texttt{R} yields the following output:
 
 <<comment=NA>>=
 head(data)
 @
 
-It is worth noting again that $x_1$, $x_2$, and $y$ are only included as individual-level variables. $z_1$ is also included as an individual-level variable but we are ultimately interested in the estimation of the level effect of $\bar{Z}_t$. $Z_2$ on the other hand does not vary between timepoints.
+It is worth noting again that $x_1$, $x_2$, and $y$ are only included as individual-level variables. $z_1$ is also included as an individual-level variable but we are ultimately interested in the estimation of the level effect of $\bar{Z}_t$. $Z_2$ on the other hand does not vary between time points.
 
 In order to be able to compare the model estimates of \texttt{arfimaMLM} to other model specification, we will first present the results of a simple linear regression, as well as a multi-level model (including random effects for \texttt{x1}) based on the simulated data. The results are presented in Table~\ref{tab:ols}.
 
@@ -233,7 +232,7 @@ arfimaMLM(formula, data, timevar
 
 The major input for the function is \texttt{formula}, which specifies the multilevel model to be estimated after the necessary data transformations according to the Arfima-MLM framework were implemented for the dataset specified in \texttt{data}. It can be specified similar to the model call in standard multilevel models estimated via \texttt{lmer}. The only difference is that the variables specified in \texttt{formula} do not have to be equal to the original variable names included in the data frame. Rather, the user can add specific suffixes to each variable in order to call specific data transformations in the \texttt{arfimaMLM} function. In the current version of the package, three specific suffixes are possible: ``\texttt{.ydif}'', ``\texttt{.xdif}'' and ``\texttt{.fd}''.
 
-If the suffix \texttt{.ydif} is added to the dependent variable (e.g. \texttt{y.ydif} instead of \texttt{y}), the function will remove the daily deterministic component from the individual level variable as specified in equation~\eqref{eq:ydif}, such that it only consists of within-timepoint, as well as non-temporally autocorrelated between-timepoint variation. If the suffix \texttt{.xdif} is added to an independent variable (e.g. \texttt{x1.xdif} instead of \texttt{x1}), the variable is simply filtered through the timepoint averages as specified in equation~\eqref{eq:xdif}.
+If the suffix \texttt{.ydif} is added to the dependent variable (e.g. \texttt{y.ydif} instead of \texttt{y}), the function will remove the daily deterministic component from the individual level variable as specified in equation~\eqref{eq:ydif}, such that it only consists of within-time point, as well as non-temporally autocorrelated between-time point variation. If the suffix \texttt{.xdif} is added to an independent variable (e.g. \texttt{x1.xdif} instead of \texttt{x1}), the variable is simply filtered through the time point averages as specified in equation~\eqref{eq:xdif}.
 
 The suffix \texttt{.fd} allows the user to select variables which are supposed to be transformed to a fractionally differenced level-variable (by aggregating individuals over each time point prior to fractionally differencing the series, \texttt{z1} in our example), or variables which are already included as a level-variable in the original dataset and are just supposed to be fractionally differenced before the multilevel model is estimated (\texttt{z2} in our example). Since the suffixes \texttt{.ydif}, \texttt{.xdif}, and \texttt{.fd} are interpreted by the function as calls for specific data transformation procedures, none of the original variable names in \texttt{data} should include them in order to prevent errors in the estimation procedure.
 
@@ -244,7 +243,7 @@ arfimaMLM(y.ydif ~ x1.xdif + x2 + z1.fd + z2.fd
           + (1|time)
           , data=data, timevar = "time", ...)
 arfimaMLM(y.ydif ~ x1.xdif + x2 + z1.fd + z2.fd
-          + (1+x1.dif|time)
+          + (1+x1.xdif|time)
           , data=data, timevar = "time", ...)
 @
 
@@ -258,14 +257,14 @@ arfimaMLM(y.ydif ~ x1.xdif + x2 + z1.fd + z2.fd + ecm
           , data=data, timevar = "time"
           , ecmformula = y.mean ~ x1.mean, ...)
 arfimaMLM(y.ydif ~ x1.xdif + x2 + z1.fd + z2.fd + ecm
-          + (1+x1.dif|time)
+          + (1+x1.xdif|time)
           , data=data, timevar = "time"
           , ecmformula = y.mean ~ x1.mean, ...)
 @
 
-\texttt{ecmformula} contains the specification of the cointegration regression to receive the residuals for the error correction mechanism (\texttt{ecm}) included in \texttt{formula} according to a simple linear regression model specification. Note that the variable names included here cannot be the original variable names, but rather have to be supplemented by the suffix \texttt{.mean}, since the ecm is based on the level/time aggregates at time $t$. Again, the mean is calculated based on the level variable specified in \texttt{timevar}, namely \texttt{time}.
+\texttt{ecmformula} contains the specification of the co-integration regression to receive the residuals for the error correction mechanism (\texttt{ecm}) included in \texttt{formula} according to a simple linear regression model specification. Note that the variable names included here cannot be the original variable names, but rather have to be supplemented by the suffix \texttt{.mean}, since the ecm is based on the level/time aggregates at time $t$. Again, the mean is calculated based on the level variable specified in \texttt{timevar}, namely \texttt{time}.
 
-If \texttt{formula} contains \texttt{ecm} as one of the independent variables, and \texttt{ecmformula} is correctly specified, the function will include the lag of the fractionally differenced residuals of the cointegration regression as an error correction mechanism in the multilevel model. The ECM does not have to be estimated prior to calling the function.
+If \texttt{formula} contains \texttt{ecm} as one of the independent variables, and \texttt{ecmformula} is correctly specified, the function will include the lag of the fractionally differenced residuals of the co-integration regression as an error correction mechanism in the multilevel model. The ECM does not have to be estimated prior to calling the function.
 
 The remaining arguments entered in the function specify details about the data manipulation. \texttt{d} calls for a specific estimation method for the fractional differencing parameter in the \texttt{fracdiff}-package or the \texttt{fractal}-package (\texttt{"Hurst"}, \texttt{"ML"}, \texttt{"GPH"}, or \texttt{"Sperio"}). The default is \texttt{"Hurst"}. If the user wants to specify the methods for each variable individually, \texttt{d} can be a list containing a call for every individual variable. Furthermore, the list can contain numeric values for differencing parameters which were estimated externally (see example). A variable will not be differenced if \texttt{d} is specified as 0. Accordingly, \texttt{decm} calls for a specific estimation method for the fractional differencing parameter. Again, it can be either \texttt{"Hurst"}, \texttt{"ML"}, \texttt{"GPH"}, or \texttt{"Sperio"} and the default is \texttt{"Hurst"}. Again, the argument can also be a numeric value indicating the differencing parameter estimated externally.
 
@@ -281,32 +280,32 @@ arfimaMLM(y.ydif ~ x1.xdif + x2 + z1.fd + z2.fd + ecm
           , d="Sperio"
           , decm="ML", ...)
 arfimaMLM(y.ydif ~ x1.xdif + x2 + z1.fd + z2.fd + ecm
-          + (1+x1.dif|time)
+          + (1+x1.xdif|time)
           , data=data, timevar = "time"
           , ecmformula = y.mean ~ x1.mean
           , d=list(y="Hurst", z1="Sperio", z2=0.25)
           , decm="GPH", ...)
 arfimaMLM(y.ydif ~ x1.xdif + x2 + z1.fd + z2.fd + ecm
-          + (1+x1.dif|time)
+          + (1+x1.xdif|time)
           , data=data, timevar = "time"
           , ecmformula = y.mean ~ x1.mean
           , arma = list(y = c(1,0), z2 = c(0,2)), ...)
 arfimaMLM(y.ydif ~ x1.xdif + x2 + z1.fd + z2.fd + ecm
-          + (1+x1.dif|time)
+          + (1+x1.xdif|time)
           , data=data, timevar = "time"
           , ecmformula = y.mean ~ x1.mean
           , arma = list(y = list(1,c(1,3))
                         , z2 = c(0,1)))
 @
 
-The first example calls the estimation method \texttt{Sperio} for all respective variables included in \texttt{formula}, and \texttt{ML} for fractionally differencing the error correction mechanism. In the second example, \texttt{d} contains a list specifying the estimation method for each variable individually. Accordingly, \texttt{y} is estimated via \texttt{Hurst}, and \texttt{z1} via \texttt{Sperio}. For \texttt{z2}, the fractional differencing parameter was externally set to $0.25$. The fractional integration parameter for the error correction mechanism is estimated via \texttt{GPH}. While it is unlikely that such a detailed specification of estimation mechanisms is necessary (or useful), this example was merely supposed to demonstrate the flexibility of the function. In the third example, the estimation of the d parameters for all respective variables in \texttt{formula} and \texttt{ecm} is kept at the default (\texttt{Hurst}). However, additionally to fractional differencing, the function also estimates an AR(1) model for \texttt{y} and a MA(2) model for \texttt{z2}. Note that the MA(2) model will provide estimates for both, MA(1) and MA(2). The multilevel model estimated subsequently would include the residuals of the AR/MA model estimated after fractionally differencing the respective variables. The last example presents a more complex ARMA model specification for \texttt{y} than in the previous example. The only difference is, that the argument indicating the order of the ARMA model for \texttt{y} is a list (\texttt{list(1,c(1,3))}) instead of a vector (\texttt{c(1,0)}). This implies that the ARMA model does not include all parameters up to the highest order specified (as in the previous example), but rather only include the AR and MA parameters that are explixitly listed. Again, the first element corresponds to the AR part, while the second element corresponds to the MA part of the model. Accordingly, \texttt{arma = list(y = list(1,c(1,3)))} will estimate AR(1), MA(1) and MA(3) parameters for y, while \texttt{arma = list(y = c(1,3))} would yield estimates for AR(1), MA(1), MA(2), as well as MA(3).
+The first example calls the estimation method \texttt{Sperio} for all respective variables included in \texttt{formula}, and \texttt{ML} for fractionally differencing the error correction mechanism. In the second example, \texttt{d} contains a list specifying the estimation method for each variable individually. Accordingly, \texttt{y} is estimated via \texttt{Hurst}, and \texttt{z1} via \texttt{Sperio}. For \texttt{z2}, the fractional differencing parameter was externally set to $0.25$. The fractional integration parameter for the error correction mechanism is estimated via \texttt{GPH}. While it is unlikely that such a detailed specification of estimation mechanisms is necessary (or useful), this example was merely supposed to demonstrate the flexibility of the function. In the third example, the estimation of the d parameters for all respective variables in \texttt{formula} and \texttt{ecm} is kept at the default (\texttt{Hurst}). However, additionally to fractional differencing, the function also estimates an AR(1) model for \texttt{y} and a MA(2) model for \texttt{z2}. Note that the MA(2) model will provide estimates for both, MA(1) and MA(2). The multilevel model estimated subsequently would include the residuals of the AR/MA model estimated after fractionally differencing the respective variables. The last example presents a more complex ARMA model specification for \texttt{y} than in the previous example. The only difference is, that the argument indicating the order of the ARMA model for \texttt{y} is a list (\texttt{list(1,c(1,3))}) instead of a vector (\texttt{c(1,0)}). This implies that the ARMA model does not include all parameters up to the highest order specified (as in the previous example), but rather only include the AR and MA parameters that are explicitly listed. Again, the first element corresponds to the AR part, while the second element corresponds to the MA part of the model. Accordingly, \texttt{arma = list(y = list(1,c(1,3)))} will estimate AR(1), MA(1) and MA(3) parameters for y, while \texttt{arma = list(y = c(1,3))} would yield estimates for AR(1), MA(1), MA(2), as well as MA(3).
 
-The last two arguments that can be specified are \texttt{drop}, which determines the number of initial timepoints to be dropped from the analysis (default is 5), as well as \texttt{report.data}, which determines whether the model output should include the transformed dataset used for the analysis (default is \texttt{TRUE}). Furthermore, additional arguments can be passed to the estimation procedures used within the function (e.g. for \texttt{lmer}).
+The last two arguments that can be specified are \texttt{drop}, which determines the number of initial time points to be dropped from the analysis (default is 5), as well as \texttt{report.data}, which determines whether the model output should include the transformed dataset used for the analysis (default is \texttt{TRUE}). Furthermore, additional arguments can be passed to the estimation procedures used within the function (e.g. for \texttt{lmer}).
 
 After describing the details about the model specification, we will now turn to a brief discussion of the function's output. In general, the function returns a list of the S3 class \texttt{`arfimaMLM'} with the following items:
 \begin{itemize}
 \item \texttt{result}: Output of the multilevel model as specified in \texttt{formula}.
-\item \texttt{ecm}: Output of the cointegration regression (returned if \texttt{ecmformula} is specified). The lagged residuals of the cointegration regression are included in the multilevel model if \texttt{ecm} is included in \texttt{formula}.
+\item \texttt{ecm}: Output of the co-integration regression (returned if \texttt{ecmformula} is specified). The lagged residuals of the co-integration regression are included in the multilevel model if \texttt{ecm} is included in \texttt{formula}.
 \item \texttt{d}: Matrix of fractional differencing parameters estimated for the level variables (\texttt{.ydif} and \texttt{.fd}) as well as the estimation method for each variable. Returns the specified value for d if it was specified in the initial call of the function.
 \item \texttt{arma}: List of \texttt{arima} results for each variable specified in the model call. Contains AR/MA estimates as well as the model residuals.
 \item \texttt{data.mean}: Data frame of variable means declared in \texttt{formula} as \texttt{.ydif}, \texttt{.xdif} or \texttt{.fd} for each time point specified by the level variable in \texttt{formula}.
@@ -342,7 +341,7 @@ head(m1$data.mean)
 newdata <- m1$data.merged
 @
 
-The same model can also be estimated using \texttt{arfimaOLS}. All arguments with regard to the data manipulations and model specifiaction are equivalent to \texttt{arfimaMLM}. The only difference is that \texttt{arfimaOLS} ultimately estimates a simple linear regression model rather than a multilevel model. Consider the following specification of the same model using \texttt{arfimaOLS}:
+The same model can also be estimated using \texttt{arfimaOLS}. All arguments with regard to the data manipulations and model specification are equivalent to \texttt{arfimaMLM}. The only difference is that \texttt{arfimaOLS} ultimately estimates a simple linear regression model rather than a multilevel model. Consider the following specification of the same model using \texttt{arfimaOLS}:
 
 <<tidy=FALSE>>=
 m2 <- arfimaOLS(y.ydif ~ x1.xdif + x2 + z1.fd + z2.fd
@@ -361,6 +360,6 @@ summary(m2)
 
 Again, the estimate for \texttt{z1} appears to be closer to its true value as compared to the original OLS results. However, since we did not properly take into account the multilevel structure as in \texttt{arfimaMLM}, the coefficient for \texttt{z2} still remains significant (albeit being closer to zero than the coefficient reported in Table~\ref{tab:ols}).
 
-\bibliographystyle{apsr}
-\bibliography{Literature}
+\bibliographystyle{/data/Copy/1-src/lit/apsr}
+\bibliography{/data/Copy/1-src/lit/Literature}
 \end{document}

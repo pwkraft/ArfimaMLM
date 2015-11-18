@@ -1,12 +1,12 @@
 \documentclass{beamer}
 \usepackage{xcolor}
-\usepackage{natbib} % package to organize literature
+\usepackage{natbib}
 \usepackage{multicol}
 \usepackage{booktabs}
-\usepackage{wasysym} % additional symbols
-\usepackage{graphicx} % to include graphics, gifs
-\usepackage{color} % add colored text
-\usepackage{lmodern} % to fix fint size error, might be problematic with math symbols
+\usepackage{wasysym}
+\usepackage{graphicx}
+\usepackage{color}
+\usepackage{lmodern}
 \usepackage{array}
 \usepackage{amsmath}
 \usepackage{dcolumn}
@@ -56,7 +56,7 @@ University of Arizona}
 
 \section{Overview}
 \subsection{}
-\begin{frame}%[allowframbreaks]
+\begin{frame}%[allowframebreaks]
 \frametitle{Introduction}
 \begin{itemize}
 \item Implementation of \emph{ArfimaMLM} approach presented by Lebo and Weber (``An Effective Approach to the Repeated Cross-Sectional Design'', \textit{AJPS} \citeyear{lebo2015effective}) in \texttt{R}.
@@ -73,36 +73,43 @@ University of Arizona}
 \end{frame}
 
 \subsection{}
-\begin{frame}[fragile]\scriptsize%[allowframbreaks]
+\begin{frame}[fragile,allowframebreaks]
 \frametitle{Description of Package}
-<<a,eval=FALSE,tidy=FALSE>>=
+<<a1,eval=FALSE,tidy=FALSE>>=
 arfimaMLM(formula, data, timevar
           , d = "Hurst", arma = NULL
           , ecmformula = NULL, decm = "Hurst"
           , drop = 5, report.data = TRUE, ...)
-
+@ 
+\framebreak
+<<a2,eval=FALSE,tidy=FALSE>>=
 arfimaMLM(y.ydif ~ x1.xdif + x1.fd + x2 + z1.fd + z2.fd
           + (1 | time)
           , data = data, timevar = "time", ...)
-
-arfimaMLM(y.ydif ~ x1.xdif + x1.fd + x2 + z1.fd + z2.fd + ecm
-          + (1 | time)
+@ 
+\framebreak
+<<a3,eval=FALSE,tidy=FALSE>>=
+arfimaMLM(y.ydif ~ x1.xdif + x1.fd + x2 + z1.fd + z2.fd
+          + ecm + (1 | time)
           , data = data, timevar = "time"
           , d = "Sperio"
           , ecmformula = y.mean ~ x1.mean
           , decm = "ML", ...)
-
-arfimaMLM(y.ydif ~ x1.xdif + x1.fd + x2 + z1.fd + z2.fd + ecm
-          + (1 + x1.dif | time)
+@ 
+\framebreak
+<<a4,eval=FALSE,tidy=FALSE>>=
+arfimaMLM(y.ydif ~ x1.xdif + x1.fd + x2 + z1.fd + z2.fd 
+          + (1 + x1.xdif | time)
           , data = data, timevar = "time"
-          , d = list(y = "Hurst", x1 = "GPH", z1 = "Sperio", z2 = 0.25)
+          , d = list(y = "Hurst", x1 = "GPH"
+                   , z1 = "Sperio", z2 = 0.25)
           , arma = list(y = c(1,0), z2 = c(0,1)), ...)
 @
 \end{frame}
 
 \section{Simulational Scenario}
 \subsection{}
-\begin{frame}%[allowframbreaks]
+\begin{frame}%[allowframebreaks]
 \frametitle{Simulational Scenario}
 <<b,echo=FALSE>>=
 suppressPackageStartupMessages(library(ArfimaMLM))
@@ -133,13 +140,13 @@ data$y <- (b1*data$x1-0.05*data$x2+0.3*rep(z1_t,each=n)
 @
 
 \begin{itemize}
-\item \emph{Scenario}: repeated cross-sectional dataset with 100 timepoints and 500 units within each timepoint
+\item \emph{Scenario}: repeated cross-sectional data set with 100 time points and 500 units within each time point
 \item \emph{Independent variables:}
 \begin{itemize}
 \item $x_1 \sim \mathcal{N}(\mu=\bar{X}_{1t},\sigma^2=2)$; $\bar{X}_{1t}$ follows a fractionally integrated series with $d=0.3$ and a mean of 5
 \item $x_2 \sim \mathcal{N}(\mu=0,\sigma^2=40)$
 \item $z_1 \sim \mathcal{N}(\mu=\bar{Z}_{1t},\sigma^2=3)$; $\bar{Z}_{1t}$ follows a fractionally integrated series with $d=0.1$ and a mean of 2
-\item $Z_{2t}$ follows a fractionally integrated series with $d=0.25$ and a mean of 3 ($Z_{2t}$ does not differ within timepoints)
+\item $Z_{2t}$ follows a fractionally integrated series with $d=0.25$ and a mean of 3 ($Z_{2t}$ does not differ within time points)
 \end{itemize}
 \item \emph{Dependent Variable}:
 \begin{align*}
@@ -152,7 +159,7 @@ y &=\bar{Y}_t+\beta_{1t} * x_1 - 0.05 * x_2 + 0.3 * \bar{Z}_{1t} + 0 * Z_{2t} + 
 \end{frame}
 
 \subsection{}
-\begin{frame}[fragile]%[allowframbreaks]
+\begin{frame}[fragile]%[allowframebreaks]
 \frametitle{Data Overview I}
 <<c,comment=NA>>=
 data[496:505,]
@@ -160,7 +167,7 @@ data[496:505,]
 \end{frame}
 
 \subsection{}
-\begin{frame}%[allowframbreaks]
+\begin{frame}%[allowframebreaks]
 \frametitle{Data Overview II}
 \begin{figure}[ht]\centering
 \caption{Plot of Dependent Variable y Across Time}
@@ -173,7 +180,7 @@ lines(y_t,lwd=2)
 \end{frame}
 
 \subsection{}
-\begin{frame}%[allowframbreaks]
+\begin{frame}%[allowframebreaks]
 \frametitle{Data Overview III}
 \begin{figure}[ht]\centering
 \caption{Plot of Independent Variables Across Time}
@@ -188,7 +195,7 @@ lines(lowess(data$x2~data$time,f=0.001),lwd=2,ylab="x2",xlab="Time")
 \end{frame}
 
 \subsection{}
-\begin{frame}%[allowframbreaks]
+\begin{frame}%[allowframebreaks]
 \frametitle{Data Overview IV}
 \begin{figure}[ht]\centering
 \caption{Plot of Independent Variables Across Time}
@@ -204,7 +211,7 @@ par(mfrow=c(1,1))
 
 \section{Model Estimation}
 \subsection{}
-\begin{frame}[fragile]%[allowframbreaks]
+\begin{frame}[fragile]%[allowframebreaks]
 \frametitle{Results without ArfimaMLM I}
 <<g,tidy=FALSE>>=
 m1a <- lm(y ~ x1 + x2 + z1 + z2, data = data)
@@ -218,7 +225,7 @@ m1c <- lmer(y ~ x1 + x2 + z1 + z2
 \end{frame}
 
 \subsection{}
-\begin{frame}[fragile]\tiny%[allowframbreaks]
+\begin{frame}[fragile]\tiny%[allowframebreaks]
 \frametitle{Results without ArfimaMLM II}
 <<h,echo=FALSE,results='asis'>>=
 stargazer(m1a,m1b,m1c,title="Results for Simple OLS and Multilevel Model",no.space=T,keep.stat=c("n","rsq","ll","bic"),label="ols_mle",align=T)
@@ -226,7 +233,7 @@ stargazer(m1a,m1b,m1c,title="Results for Simple OLS and Multilevel Model",no.spa
 \end{frame}
 
 \subsection{}
-\begin{frame}[fragile]%[allowframbreaks]
+\begin{frame}[fragile]%[allowframebreaks]
 \frametitle{Results using ArfimaMLM I}
 <<i,tidy=FALSE>>=
 m2a <- arfimaMLM(y.ydif ~ x1.xdif + x2 + z1.fd + z2.fd
@@ -240,11 +247,24 @@ m2b <- arfimaMLM(y.ydif ~ x1.xdif + x2 + z1.fd + z2.fd
 \end{frame}
 
 \subsection{}
-\begin{frame}[fragile]\tiny%[allowframbreaks]
+\begin{frame}[fragile]\tiny%[allowframebreaks]
 \frametitle{Results using ArfimaMLM II}
 <<j,echo=FALSE,results='asis'>>=
 stargazer(m2a$result,m2b$result,title="Results for ArfimaMLM",no.space=T,label="arfimamlm",align=T)
 @
+\end{frame}
+
+\section{Outlook}
+
+\subsection{}
+\begin{frame}
+\frametitle{Current and Future Work}
+\begin{itemize}
+\item Implement new estimator for fractional differencing parameter $d$ (whittleFML)
+\item Simultaneous estimation in Stan
+\item ArfimaMLM for categorical outcomes
+\item Other improvements (better output, integrate pacf plots etc.)
+\end{itemize}
 \end{frame}
 
 \subsection{}
@@ -261,8 +281,8 @@ stargazer(m2a$result,m2b$result,title="Results for ArfimaMLM",no.space=T,label="
    \def\newblock{\hskip .11em plus .33em minus .07em}
    %\nocite{*}
  %  \begin{tiny}
-   \bibliographystyle{apsr}
-   \bibliography{Literature}
+   \bibliographystyle{/data/Copy/1-src/lit/apsr}
+   \bibliography{/data/Copy/1-src/lit/Literature}
  %  \end{tiny}
  \end{frame}
 
