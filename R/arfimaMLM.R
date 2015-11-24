@@ -2,8 +2,8 @@
 #' @import lme4
 arfimaMLM <-
 function(formula, data, timevar
-         , d="Hurst", arma=NULL
-         , ecmformula=NULL, decm="Hurst"
+         , d="whittleFML", arma=NULL
+         , ecmformula=NULL, decm="whittleFML"
          , drop=5, report.data=TRUE
          , ...){
   

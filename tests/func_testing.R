@@ -40,7 +40,7 @@ data <- data[data$time != 10,]
 
 # estimate models
 m1 <- arfimaMLM(y.ydif ~ x1.xdif + x2 + z1.fd + z2.fd +(1|time), timevar="time"
-                ,data=data ,d="ML")
+                ,data=data)
 m1b <- arfimaMLM(y.ydif ~ x1.xdif + x2 + z1.fd + z2.fd +(1|time), timevar="time"
                 ,data=data ,d=0)
 m2 <- arfimaMLM(y.ydif ~ x1.xdif + x2 + z1.fd + z2.fd + ecm + (1|time), timevar="time"
@@ -96,6 +96,50 @@ m10 <- arfimaMLM(y.ydif ~ x1.xdif + x2 + z1.fd + z2.fd + ecm + (1|time), timevar
 summary(m9)
 summary(m10)
 
+### test whittleFML
+# using arfimaSim to generate series
+arfimaSim <- function(n, d, p=NULL, q=NULL) {
+  require(signal)
+  # creates a fractionally integrated (p,d,q) process of length n (extends to (1,d,1))
+  # d: fractional differencing parameter (e.g. d=.4, produces series that FI(.4)
+  # p: value of AR parameter
+  # q: value of MA
+  ##
+  x <- rnorm(n)
+  d <- -d
+  n <- length(x)
+  k <- seq(1:(n-1))
+  b <- (k-d-1)/k 
+  b <- c(1,cumprod(b))
+  if (is.null(p) && is.null(q)) {
+    df <- filter(b,1,x)
+  } else if (!is.null(p) && is.null(q)) {
+    df <- filter(b,1,x)
+    arx <- filter(1,c(1,-p), df)
+  } else if (is.null(p) && !is.null(q)) {
+    df <- filter(b,1,x)
+    max <- filter(c(1,q), 1, df)
+  } else if (!is.null(p) && !is.null(q)) {
+    df <- filter(b, 1, x)
+    marx <- filter(c(1,q),c(1,-p), df)
+  }
+}
+
+# Note: limits on MLE are between -0.99 and 0.99 while 
+# limit of FML is (-0.5, 0.5). First estimate can be 
+# considered exploratory, then difference if necessary. 
+
+df <- arfimaSim(200, d=.4)
+whittleFML(df)
+whittleFML(df, inits = list(d=0))
+ 
+ardf <- arfimaSim(200, d=.75, p = .2)
+whittleFML(ardf, p=1, inits = list(d=0, AR=0))
+
+madf <- arfimaSim(200, d=.3, q = .4)
+whittleFML(madf, q=1, inits = list(d=0, MA=0))
+
+
 ### test github version
 
 rm(list=ls())
@@ -130,4 +174,5 @@ data$y <- (b1*data$x1-0.05*data$x2+0.3*rep(z1_t,each=n)
 m1 <- arfimaMLM(y.ydif ~ x1.xdif + x2 + z1.fd + z2.fd +(1|time), timevar="time"
                 ,data=data ,d="ML")
 m1b <- arfimaMLM(y.ydif ~ x1.xdif + x2 + z1.fd + z2.fd +(1|time), timevar="time"
-                 ,data=data ,d=0)
+                ,data=data ,d=0)
+

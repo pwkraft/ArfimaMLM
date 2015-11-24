@@ -5,9 +5,10 @@
 #' @importFrom fracdiff diffseries
 #' @import fractal
 fd.default <-
-  function(x, dval="Hurst", ...) {  
-  d.value <- NA
-  if(dval=="Hurst") d.value <- hurstSpec(diff(x), method="standard", sdf.method="multitaper", ...)[1]+.5
+    function(x, dval="whittleFML", ...) {  
+        d.value <- NA
+        if(dval=="whittleFML") d.value <- whittleFML(x)$coefficients[1,1]
+  else if(dval=="Hurst") d.value <- hurstSpec(diff(x), method="standard", sdf.method="multitaper", ...)[1]+.5
   else if(dval=="ML") d.value <- fracdiff(x, ...)$d
   else if(dval=="GPH")  d.value <- fdGPH(x, ...)$d
   else if(dval=="Sperio")  d.value <- fdSperio(x, ...)$d
