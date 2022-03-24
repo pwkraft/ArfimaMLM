@@ -9,10 +9,10 @@ Estimate fractional differencing parameter and/or differenciate series for a giv
 This is a wrapper function for the \code{\link[fractal:hurstSpec]{hurstSpec}}-function as well as the \code{\link[fracdiff:fracdiff]{fracdiff}}-package for internal use as part of the \code{\link[ArfimaMLM:arfimaMLM]{arfimaMLM}} function. The function estimates the fractional differencing parameter d of a series \code{x} and returns the fractionally differenced series. Alternatively, the  differencing parameter can be estimated externally and included as a numeric argument in \code{dval}. In this case, the function returns the fractionally differenced series without estimating the differencing parameter itself.
 }
 \usage{
-fd(x, dval = "Hurst", ...)
+fd(x, dval = "ML", ...)
 
 ## S3 method for class 'character'
-fd(x, dval = "Hurst", ...)
+fd(x, dval = "ML", ...)
 
 ## S3 method for class 'numeric'
 fd(x, dval, ...)
@@ -23,7 +23,7 @@ fd(x, dval, ...)
 Numeric vector or time series to be fractionally differenced.
 }
   \item{dval}{
-Call for a specific estimation method for the fractional differencing parameter in the \code{\link[fractal:hurstSpec]{hurstSpec}}-function (\code{"Hurst"}) or the \code{\link[fracdiff:fracdiff]{fracdiff}}-package (\code{"ML"}, \code{"GPH"}, or \code{"Sperio"}). Default is \code{"Hurst"}. Alternatively, \code{dval} can be a numeric argument that will be directly passed to \code{diffseries} to  calculate the fractionally differenced series according to the differencing parameter specified in \code{dval}. If a value of 0 is specified, the function will simply return the original series \code{x}.
+Call for a specific estimation method for the fractional differencing parameter in the \code{\link[fractal:hurstSpec]{hurstSpec}}-function (\code{"Hurst"}) or the \code{\link[fracdiff:fracdiff]{fracdiff}}-package (\code{"ML"}, \code{"GPH"}, or \code{"Sperio"}). Default is \code{"ML"}. Alternatively, \code{dval} can be a numeric argument that will be directly passed to \code{diffseries} to  calculate the fractionally differenced series according to the differencing parameter specified in \code{dval}. If a value of 0 is specified, the function will simply return the original series \code{x}.
 }
   \item{\dots}{
 Further arguments passed to  \code{\link[fractal:hurstSpec]{hurstSpec}}, \code{\link[fracdiff:fracdiff]{fracdiff}}, \code{\link[fracdiff:fdGPH]{fdGPH}},

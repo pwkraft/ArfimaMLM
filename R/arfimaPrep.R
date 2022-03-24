@@ -1,7 +1,7 @@
 #' @export
 arfimaPrep <-
   function(data, timevar, varlist.mean, varlist.fd, varlist.xdif, varlist.ydif
-           , d="Hurst", arma=NULL, ecmformula=NULL, decm="Hurst", drop=5, ...){
+           , d="ML", arma=NULL, ecmformula=NULL, decm="ML", drop=5, ...){
     # warnings / error messages
     if(missing(timevar)) stop("timevar must be specified!")
     if(length(unique(diff(sort(unique(data[,timevar])))))>1) warning("Time series is not evenly spaced!")

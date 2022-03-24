@@ -1,8 +1,8 @@
 #' @export
 arfimaOLS <-
   function(formula, data, timevar
-           , d="Hurst", arma=NULL
-           , ecmformula=NULL, decm="Hurst"
+           , d="ML", arma=NULL
+           , ecmformula=NULL, decm="ML"
            , drop=5, report.data=TRUE
            , ...){
     
