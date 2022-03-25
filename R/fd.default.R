@@ -3,11 +3,15 @@
 #' @importFrom fracdiff fdGPH
 #' @importFrom fracdiff fdSperio
 #' @importFrom fracdiff diffseries
-#' @import fractal
+#' @importFrom stats aggregate arima coef lm na.omit residuals
+#' @import ggplot2
 fd.default <-
-  function(x, dval="Hurst", ...) {  
+  function(x, dval="ML", ...) {  
   d.value <- NA
-  if(dval=="Hurst") d.value <- hurstSpec(diff(x), method="standard", sdf.method="multitaper", ...)[1]+.5
+  if(dval=="Hurst"){
+    requireNamespace("fractal", quietly=TRUE)
+    d.value <- fractal::hurstSpec(diff(x), method="standard", sdf.method="multitaper", ...)[1]+.5
+  }
   else if(dval=="ML") d.value <- fracdiff(x, ...)$d
   else if(dval=="GPH")  d.value <- fdGPH(x, ...)$d
   else if(dval=="Sperio")  d.value <- fdSperio(x, ...)$d

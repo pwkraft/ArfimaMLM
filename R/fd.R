@@ -1,3 +1,3 @@
 #' @export
 fd <-
-function(x, dval="Hurst", ...) UseMethod("fd",object=dval)
+function(x, dval="ML", ...) UseMethod("fd",object=dval)

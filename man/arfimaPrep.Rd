@@ -10,8 +10,8 @@ This function prepares a repeated cross-sectional dataset or pooled cross-sectio
 arfimaPrep(data, timevar
            , varlist.mean, varlist.fd
            , varlist.xdif, varlist.ydif
-           , d = "Hurst", arma = NULL
-           , ecmformula = NULL, decm = "Hurst"
+           , d = "ML", arma = NULL
+           , ecmformula = NULL, decm = "ML"
            , drop = 5, ...)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -35,7 +35,7 @@ arfimaPrep(data, timevar
   Character vector of variable names in \code{data} for which the temporal deterministic component is removed by substracting the difference of the within-timepoint average and its stationary series free of autocorrelation (with each timepoint specified by \code{timevar}). See details for further information.
 }
   \item{d}{
-Call for a specific estimation method for the fractional differencing parameter in the \code{\link[fractal:hurstSpec]{fractal}}-package (\code{``Hurst''}) or in the \code{\link[fracdiff:fracdiff]{fracdiff}}-package (\code{``ML''}, \code{``GPH''}, or \code{``Sperio''}). Default estimation procedure is by estimating the \code{Hurst} exponent. If the user wants to specify the methods for each variable individually, \code{d} can be a list containing a call for every individual variable. Furthermore, the list can contain numeric values for differencing parameters which were estimated externally (e.g. 1 for simple differencing, also see example for further details). A variable will not be differenced if \code{d} is specified as 0.
+Call for a specific estimation method for the fractional differencing parameter in the \code{\link[fractal:hurstSpec]{fractal}}-package (\code{``Hurst''}) or in the \code{\link[fracdiff:fracdiff]{fracdiff}}-package (\code{``ML''}, \code{``GPH''}, or \code{``Sperio''}). Default estimation procedure is by estimating the \code{ML} exponent. If the user wants to specify the methods for each variable individually, \code{d} can be a list containing a call for every individual variable. Furthermore, the list can contain numeric values for differencing parameters which were estimated externally (e.g. 1 for simple differencing, also see example for further details). A variable will not be differenced if \code{d} is specified as 0.
 }
   \item{arma}{
 List of variables for which AR and MA parameters are to be estimated (after fractional differencing) as well as a vector containing the respective orders of the model to fit. \code{order[1]} corresponds to the AR part and \code{order[2]} to the MA part, similar to the model specification in \code{\link[stats:arima]{arima}} (just excluding the d parameter here). For variables specified in \code{arma}, the function will use the residuals of the ARMA model for the subsequent model estimation in order to remove their deterministic components. All variables included in the \code{arma} list have to included in either \code{varlist.fd}, \code{varlist.ydif}, or \code{varlist.xdif}. It is also possible to keep some of the AR/MA parameters fixed at zero (e.g. if the model is only supposed to estimate AR[1] and AR[3] parameters, but not AR[2]). In order to specify such a model, replace the vector containing the orders of the model with a list containing two vectors indicating each individual AR or MA parameter to be estimated. Please see the examples for clarification.
@@ -44,7 +44,7 @@ List of variables for which AR and MA parameters are to be estimated (after frac
 Specification of the cointegration regression to receive the residuals for the error correction mechanism (ecm) to be included in the transfromed dataset: linear formula object with the response on the left of a ~ operator and the independent variables, separated by + operators, on the right. Note that the variable names included here cannot be the original variable names included in \code{data}, but rather has to be extended by adding ``\code{.mean}'' to the original names, since the ecm is always based on the level/time aggreegates (see example).
 }
   \item{decm}{
-Call for estimation method for the fractional differencing parameter (see \code{d} for details). Can be either \code{``Hurst''} \code{``ML''}, \code{``GPH''}, or \code{``Sperio''}. Default is \code{``Hurst''}.
+Call for estimation method for the fractional differencing parameter (see \code{d} for details). Can be either \code{``Hurst''} \code{``ML''}, \code{``GPH''}, or \code{``Sperio''}. Default is \code{``ML''}.
 }
   \item{drop}{
 Number of time points from the beginning of the series dropped from analysis. Default is 5.
@@ -90,7 +90,6 @@ Patrick Kraft
 \code{\link[fracdiff:fracdiff]{fracdiff}}, \code{\link[fractal:hurstSpec]{hurstSpec}}, \code{\link[ArfimaMLM:fd]{fd}}, and \code{\link[ArfimaMLM:ArfimaMLM]{ArfimaMLM}} for a package overview.
 }
 \examples{
-require(fractal)
 require(fracdiff)
 
 ### set basic parameters for simulation
